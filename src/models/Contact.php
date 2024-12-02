@@ -11,6 +11,37 @@ class Contact{
         $this -> database = new Database();
     }
 
+
+    public function getContacts() {
+        /**
+         * Get all contacts plus the number of linked clients.
+         */
+        $stmt = '
+            SELECT 
+                c.id AS contact_id,
+                c.name,
+                c.surname,
+                c.email,
+                COUNT(clc.clientId) AS linked_clients_count
+            FROM 
+                contact c
+            LEFT JOIN 
+                clientlinkcontact clc ON c.id = clc.contactId
+            GROUP BY 
+                c.id;
+        ';
+        
+        try {
+            $result = $this->database->query($stmt, []); // Assuming a method to execute the query
+            return $result;
+        } catch (Exception $e) {
+            // Log and handle any database errors
+            error_log('Database error: ' . $e->getMessage());
+            return false; // Or an empty array to indicate failure
+        }
+    }
+    
+
     
     public function insert($data) {
         // echo "<pre>";

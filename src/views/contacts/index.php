@@ -35,23 +35,33 @@
                             </tr>
                         </thead>
                         <tbody>
+                            
+                        <?php if (empty($contacts)) { ?>
+                        <tr>
+                        <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts found!</td>
+                    </tr>
+                    <?php } else {
+                        $count = 1;
+                        foreach($contacts as $contact) { ?>
+
+                            <tr>
+                            <th scope="row"><?php echo $count++ ?></th>
+                            <td><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); htmlspecialchars($contact['surname'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($contact['linked_clients_count'],ENT_QUOTES, 'UTF-8')?></td>
+                            </tr>
+                            
+                            
+                      <?php  }
+                        
+                    } ?>
                             <tr>
                             <th scope="row">1</th>
                             <td>Mark</td>
                             <td>Otto</td>
                             <td>@mdo</td>
                             </tr>
-                            <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                            </tr>
-                            <tr>
-                            <th scope="row">3</th>
-                            <td colspan="2">Larry the Bird</td>
-                            <td>@twitter</td>
-                            </tr>
+               
                         </tbody>
                     </table>
                     </div>

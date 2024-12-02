@@ -14,16 +14,7 @@ class Client{
         $this -> database = new Database();
     }
 
-//     public function getClients(){
-//         // Also return the number of linkedcontacts from table CREATE TABLE `clientlinkcontact` (
-// //   `clientId` varchar(255) NOT NULL,
-// //   `contactId` varchar(255) NOT NULL,
-// //   `id` int(11) NOT NULL
-// // ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-//         $stmt = 'Select * FROM client';
-//         $result = $this-> database -> query($stmt,[]);
-//         return $result;
-//     }
+
 
 
 public function getClients() {
