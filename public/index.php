@@ -4,6 +4,7 @@ require '../src/core/config.php';
 
 // Include the base path so that we easily load _partials.
 set_include_path(__DIR__ . '/../src/views/');
+ini_set('display_errors', 1);
 
 
 $uri = $_SERVER['REQUEST_URI'];

@@ -42,40 +42,47 @@
 
             <!-- Contacts Tab -->
             <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-                <div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">First</th>
-                                <th scope="col">Last</th>
-                                <th scope="col">Handle</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td colspan="2">Larry the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div>
+            <table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Contact Full Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if (empty($data['clientContacts'])) { ?>
+        <tr>
+            <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts linked!</td>
+        </tr>
+    <?php } else {
+        $count = 1; // Counter for row numbers
+        foreach ($data['clientContacts'] as $contact) { ?>
+            <tr id="contact-row-<?php echo $contact['contact_id']; ?>">
+                <th scope="row"><?php echo $count++; ?></th>
+                <td><?php echo htmlspecialchars($contact['contact_name'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($contact['contact_surname'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo htmlspecialchars($contact['contact_email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td>
+                    <form method="POST" action="/add-client?tab=contacts">
+                        <input type="hidden" name="action" value="unlink_contact">
+                        <input type="hidden" name="contact_id" value="<?php echo $contact['contact_id']; ?>">
+                        <input type="hidden" name="client_id" value="<?php echo $contact['client_id']; ?>">
+                        <button type="submit" class="btn btn-danger btn-sm unlink-contact-btn">Unlink</button>
+                    </form>
+                </td>
+            </tr>
+        <?php } 
+    } ?> 
+    </tbody>
+</table>
+
+</div>
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linkContactsModal">Link Contact</button>
-                    <button class="btn btn-primary me-md-2" type="button">Save</button>
+                    <button class="btn btn-primary me-md-2" type="button" onclick="window.location.href='/';">Done</button>
                     <!-- <button class="btn btn-primary" type="button">Button</button> -->
                 </div>
             </div>

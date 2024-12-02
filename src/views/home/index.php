@@ -45,16 +45,17 @@
                         <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No clients found!</td>
                     </tr>
                     <?php } else {
-
+                        $count = 1;
                         foreach($clients as $client) { ?>
 
                             <tr>
-                            <th scope="row">1</th>
+                            <th scope="row"><?php echo $count++ ?></th>
                             <td><?php echo htmlspecialchars($client['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php echo htmlspecialchars($client['clientcode'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td>10</td>
+                            <td><?php echo htmlspecialchars($client['linked_contacts_count'],ENT_QUOTES, 'UTF-8')?></td>
                             </tr>
-                            <tr> 
+                            
+                            
                       <?php  }
                         
                     } ?>

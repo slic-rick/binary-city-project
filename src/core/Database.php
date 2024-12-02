@@ -5,7 +5,7 @@ class Database {
 
     private $connection;
 
-	public function connect()
+	private function connect()
 	{
 		if ($this->connection === null) {
 			$string = "mysql:hostname=" . DBHOST . ";dbname=" . DBNAME;
@@ -29,6 +29,11 @@ class Database {
 		}
 
 		return false;
+	}
+
+	public function getLastSavedId(){
+		$con = $this -> connect();
+		return $con -> lastInsertId();
 	}
 
 

@@ -12,26 +12,48 @@ class AddClient extends Controller {
        	  $data = [];
 		  $client = new Client;
 
-		          // Check if form data exists
-				  if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
-					$contactIds = $_POST['contact_ids']; // Array of selected contact IDs
-					$clientId = $_POST['client_id']; // Ensure this is passed with the form
-
-					echo "<pre>";
-					echo print_r($_POST['contact_ids']);
-					echo "</pre>";
+		      // Handle unlink contact request
+			  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unlink_contact') {
+				// Validate input
+				$contactId = $_POST['contact_id'] ?? null;
+				$clientId = $_POST['client_id'] ?? null;
 		
-					// // Insert each contact-client link into the database
-					// $stmt = 'INSERT INTO clientlinkcontact (clientId, contactId) VALUES (:clientId, :contactId)';
-					// foreach ($contactIds as $contactId) {
-					// 	$this->database->query($stmt, [
-					// 		':clientId' => $clientId,
-					// 		':contactId' => $contactId,
-					// 	]);
-					// }
+				if ($contactId && $clientId) {
+					// Unlink the contact from the client
+					$client->unlinkContact($contactId, $clientId);
+				}
+		
+				// Redirect back to the contacts tab to avoid duplicate form submissions
+				header("Location: /add-client?tab=contacts");
+				exit;
+			}
+
+		          // Check if form data exists
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
+					$contactIds = $_POST['contact_ids']; // Array of selected contact IDs
+					// $clientId = $_POST['client_id']; // Ensure this is passed with the form
+
+					// echo "<pre>";
+					// echo print_r($_POST['contact_ids']);
+					// echo "</pre>";
+
+
+					// Get the last insertedId
+					$clientId = $client->getlastInsertedId();
+					$client -> saveLinkedContact($_POST['contact_ids'],$clientId);
+
+					$clientContacts = $client -> getClientContacts($clientId);
+
+					$data['clientContacts'] = $clientContacts;
+
+					// echo "<pre>";
+					// echo print_r($data);
+					// echo "</pre>";
+
 				}
 
-        if ($_SERVER['REQUEST_METHOD'] == "POST"){
+        
+				if ($_SERVER['REQUEST_METHOD'] == "POST"){
 
             // Validate the data before saving to database!
           
@@ -45,14 +67,30 @@ class AddClient extends Controller {
 				$_POST['clientCode'] = $clientCode;
 
 				// Insert client data
-				$client->insert($_POST);
+				$result = $client->insert($_POST);
+
+				echo "<pre>";
+				echo print_r($result);
+				echo "</pre>";
+
+				// If the client got inserted, then get all the clients
+				if($result){
+					echo "We inserted the result";
+
+					// Get the last insertedId
+					 $clientId = $client->getlastInsertedId();
+
+					 $clientContacts = $client -> getClientContacts($clientId);
+
+					 $data['clientContacts'] = $clientContacts;
+				}
 
                 // On success -> go to back and show the second tab!
 
                 // echo "inserted user";
 
 				// Get the last inserted client ID
-				// $clientId = $client->getLastInsertedId();
+			
 
 				// show($clientId);
 
@@ -89,23 +127,14 @@ class AddClient extends Controller {
 		
 		$contacts = $client -> getAllContacts();
 
-
-
-		
 		$data['contacts'] = $contacts;
 
-		echo "<pre>";
-		echo print_r($data);
-		echo "</pre>";
-
-
-		// if($clientId){
-		// 	//  get the clients contacts
-
-		// }
+		// Get clientContacts
 
         $this->renderView('addClient/index', ['data' => $data]);
     }
+
+
 
     private function validate($data)
 	{
