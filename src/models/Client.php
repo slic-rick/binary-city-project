@@ -46,8 +46,6 @@ public function getClients() {
     return $result;
 }
 
-
-
     public function insert($data) {
         echo "<pre>";
         echo print_r($data);

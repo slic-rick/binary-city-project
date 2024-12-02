@@ -58,69 +58,69 @@ class AddClient extends Controller {
             // Validate the data before saving to database!
           
 
-			// Validate form input
-			$errors = $this->validate($_POST);
+					// Validate form input
+					$errors = $this->validate($_POST);
 
-            if (empty($errors)) {
-				// Generate client code
-				$clientCode = $this->generateClientCode($_POST['name']);
-				$_POST['clientCode'] = $clientCode;
+					if (empty($errors)) {
+						// Generate client code
+						$clientCode = $this->generateClientCode($_POST['name']);
+						$_POST['clientCode'] = $clientCode;
 
-				// Insert client data
-				$result = $client->insert($_POST);
+						// Insert client data
+						$result = $client->insert($_POST);
 
-				echo "<pre>";
-				echo print_r($result);
-				echo "</pre>";
+						// echo "<pre>";
+						// echo print_r($result);
+						// echo "</pre>";
 
-				// If the client got inserted, then get all the clients
-				if($result){
-					echo "We inserted the result";
+						// If the client got inserted, then get all the clients
+						if($result){
+							echo "We inserted the result";
 
-					// Get the last insertedId
-					 $clientId = $client->getlastInsertedId();
+							// Get the last insertedId
+							$clientId = $client->getlastInsertedId();
 
-					 $clientContacts = $client -> getClientContacts($clientId);
+							$clientContacts = $client -> getClientContacts($clientId);
 
-					 $data['clientContacts'] = $clientContacts;
-				}
+							$data['clientContacts'] = $clientContacts;
+						}
 
-                // On success -> go to back and show the second tab!
+						// On success -> go to back and show the second tab!
 
-                // echo "inserted user";
+						// echo "inserted user";
 
-				// Get the last inserted client ID
-			
+						// Get the last inserted client ID
+					
 
-				// show($clientId);
+						// show($clientId);
 
-				// if (isset($_POST['contacts']) && is_array($_POST['contacts'])) {
-				// 	$contacts_id = $_POST['contacts'];
+						// if (isset($_POST['contacts']) && is_array($_POST['contacts'])) {
+						// 	$contacts_id = $_POST['contacts'];
 
-				// 	$contactClient = new ContactClients;
-				// 	foreach ($contacts_id as $id) {
-				// 		$client_contact = [
-				// 			'contactId' => $id,
-				// 			'clientId' => $clientId
-				// 		];
-				// 		//show($client_contact);
-				// 		$contactClient->insert($client_contact);
+						// 	$contactClient = new ContactClients;
+						// 	foreach ($contacts_id as $id) {
+						// 		$client_contact = [
+						// 			'contactId' => $id,
+						// 			'clientId' => $clientId
+						// 		];
+						// 		//show($client_contact);
+						// 		$contactClient->insert($client_contact);
 
-				// 		// update the counter for the number of linked contacts
-				// 		$client->incrementLinkedContactsCount($clientId);
-				// 	}
-				// }
+						// 		// update the counter for the number of linked contacts
+						// 		$client->incrementLinkedContactsCount($clientId);
+						// 	}
+						// }
 
-				// Redirect to a success page or another appropriate page
-				// header('Location: /'); // Change the URL to your success page
-				// exit;
-				header("Location: /add-client?tab=contacts");
-				exit;
-			} else {
-				$data['errors'] = $errors;
-				// $data['name'] = $_POST['name'];
-				// $data['email'] = $_POST['email'];
-			}
+						// Redirect to a success page or another appropriate page
+						// header('Location: /'); // Change the URL to your success page
+						// exit;
+						header("Location: /add-client?tab=contacts");
+						exit;
+					} else {
+						$data['errors'] = $errors;
+						// $data['name'] = $_POST['name'];
+						// $data['email'] = $_POST['email'];
+					}
 
         }
 

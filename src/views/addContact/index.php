@@ -19,7 +19,7 @@
                 <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">General</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link disabled" id="contacts-tab" type="button" role="tab" aria-controls="contacts" aria-selected="false">Clients</button>
+                <button class="nav-link disabled" id="clients-tab" type="button" role="tab" aria-controls="clients" aria-selected="false">Clients</button>
             </li>
         </ul>
 
@@ -27,26 +27,26 @@
         <div class="tab-content p-3 border border-top-0" id="addClientTabsContent">
             <!-- General Tab -->
             <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                <form id="generalForm">
+                <form id="generalForm" action="/add-contact" method="POST">
                     <div class="mb-3">
-                        <label for="clientName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="clientName" name="clientName" placeholder="Enter client name" required>
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter client name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="clientEmail" class="form-label">Surname</label>
-                        <input type="email" class="form-control" id="clientEmail" name="clientEmail" placeholder="Enter client email" required>
+                        <label for="surname" class="form-label">Surname</label>
+                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter client surname" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="clientEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="clientEmail" name="clientEmail" placeholder="Enter client email" required>
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter client email" required>
                     </div>
-                    <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+                    <button type="submit" class="btn btn-primary" id="nextBtn">Next</button>
                 </form>
             </div>
 
             <!-- Contacts Tab -->
-            <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+            <div class="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="clients-tab">
                 <div>
                     <table class="table table-bordered">
                         <thead>
@@ -58,23 +58,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td colspan="2">Larry the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
+                        <?php if (empty($data['contactClients'])) { ?>
+                <tr>
+                    <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No clients linked!</td>
+                </tr>
+            <?php } else {
+                $count = 1; // Counter for row numbers
+                foreach ($data['contactClients'] as $client) { ?>
+                    <tr id="contact-row-<?php echo $contact['contact_id']; ?>">
+                        <th scope="row"><?php echo $count++; ?></th>
+                        <td><?php echo htmlspecialchars($client['client_name'], ENT_QUOTES, 'UTF-8')  ?></td>
+                        <td><?php echo htmlspecialchars($client['client_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td>
+                            <form method="POST" action="/add-contact?tab=clients">
+                                <input type="hidden" name="action" value="unlink_client">
+                                <input type="hidden" name="id" value="<?php echo $client['client_id']; ?>">
+                              
+                                <button type="submit" class="btn btn-danger btn-sm unlink-contact-btn">Unlink</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php } 
+            } ?>
+                  
                         </tbody>
                     </table>
                 </div>
@@ -86,7 +92,7 @@
             </div>
         </div>
 
-                    <!-- Link Contacts Modal -->
+         <!-- Link Contacts Modal -->
         <div class="modal fade" id="linkContactsModal" tabindex="-1" aria-labelledby="linkContactsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -95,43 +101,40 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="linkContactsForm">
+                        <form id="linkContactsForm" action="add-contact?tab=clients" method="POST">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col">
                                             <input type="checkbox" id="selectAll" />
                                         </th>
-                                        <th scope="col">#</th>
+                                        <!-- <th scope="col">#</th> -->
                                         <th scope="col">Name</th>
-                                        <th scope="col">Email</th>
+                                        <th scope="col">Client Code</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+
+                                
                                     <?php
-                                    // Example data from the database (Replace with actual query results)
-                                    $contacts = [
-                                        ['id' => 1, 'name' => 'John Doe', 'email' => 'john@example.com'],
-                                        ['id' => 2, 'name' => 'Jane Smith', 'email' => 'jane@example.com'],
-                                        ['id' => 3, 'name' => 'Bob Brown', 'email' => 'bob@example.com'],
-                                    ];
-                                    foreach ($contacts as $contact) {
+                                   
+                                    foreach ($data['clients'] as $client) {
                                         echo "<tr>
-                                                <td><input type='checkbox' class='contact-checkbox' value='{$contact['id']}' /></td>
-                                                <td>{$contact['id']}</td>
-                                                <td>{$contact['name']}</td>
-                                                <td>{$contact['email']}</td>
+                                                <td><input type='checkbox' name='client_ids[]' class='contact-checkbox' value='" . htmlspecialchars($client['client_id']) . "' /></td>
+                                                <td>{$client['name']}</td>
+                                                <td>{$client['clientcode']}</td>
                                               </tr>";
                                     }
                                     ?>
                                 </tbody>
                             </table>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary" id="saveContactsBtn">Save</button>
+                            </div>
                         </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="saveContactsBtn">Save</button>
-                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -140,62 +143,92 @@
 </div>
 
 </div>
-
-</div>
-
-<script>
-document.getElementById("nextBtn").addEventListener("click", function () {
-    const clientName = document.getElementById("clientName").value.trim();
-    const clientEmail = document.getElementById("clientEmail").value.trim();
-
-    if (clientName === "" || clientEmail === "") {
-        alert("Please fill in all required fields.");
-        return;
-    }
-
-    // Enable the Contacts tab and switch to it
-    const contactsTab = document.getElementById("contacts-tab");
-    contactsTab.classList.remove("disabled");
-    contactsTab.setAttribute("data-bs-toggle", "tab");
-    contactsTab.setAttribute("data-bs-target", "#contacts");
-    const tabTrigger = new bootstrap.Tab(contactsTab);
-    tabTrigger.show();
-});
-</script>
-
-
+    </div>
          </div>
      </div>
 
     <?php   include "partials/_scripts.php"; ?>
-    
+
+
 <script>
-document.getElementById("nextBtn").addEventListener("click", function () {
-    const clientName = document.getElementById("clientName").value.trim();
-    const clientEmail = document.getElementById("clientEmail").value.trim();
+// document.getElementById("nextBtn").addEventListener("click", function (event) {
+//     event.preventDefault(); // Prevent default form submission
+
+//     const clientName = document.getElementById("clientName").value.trim();
+//     const clientEmail = document.getElementById("clientEmail").value.trim();
+
+//     if (clientName === "" || clientEmail === "") {
+//         alert("Please fill in all required fields.");
+//         return;
+//     }
+
+//     // Enable the Clients tab and switch to it
+//     const contactsTab = document.getElementById("clients-tab");
+//     contactsTab.classList.remove("disabled");
+//     contactsTab.setAttribute("data-bs-toggle", "tab");
+//     contactsTab.setAttribute("data-bs-target", "#clients");
+//     const tabTrigger = new bootstrap.Tab(contactsTab);
+//     tabTrigger.show();
+
+//     // Submit the form
+//     // document.getElementById("generalForm").submit();
+// });
+
+
+document.getElementById("nextBtn").addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent default form submission behavior
+
+    const clientName = document.getElementById("name").value.trim();
+    const clientEmail = document.getElementById("email").value.trim();
 
     if (clientName === "" || clientEmail === "") {
         alert("Please fill in all required fields.");
         return;
     }
 
-    // Switch to Contacts tab
-    const contactsTab = document.getElementById("contacts-tab");
+    // Enable the Clients tab and switch to it
+    const contactsTab = document.getElementById("clients-tab");
     contactsTab.classList.remove("disabled");
     contactsTab.setAttribute("data-bs-toggle", "tab");
-    contactsTab.click();
+    contactsTab.setAttribute("data-bs-target", "#clients");
+
+    const tabTrigger = new bootstrap.Tab(contactsTab);
+    tabTrigger.show();
+
+    // Add the active tab to the URL
+    const form = document.getElementById("generalForm");
+    const url = new URL(form.action, window.location.origin);
+    url.searchParams.set("tab", "clients");
+    form.action = url.toString();
+
+    // Submit the form programmatically
+    form.submit();
 });
 
-document.getElementById("contacts-tab").addEventListener("click", function (e) {
 
-    // const generalFormValid = document.getElementById("clientName").value.trim() !== "" && 
-    //                          document.getElementById("clientEmail").value.trim() !== "";
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get("tab");
 
-    // if (!generalFormValid) {
-    //     e.preventDefault(); // Prevent switching tabs
-    //     alert("Please complete the General tab first.");
-    // }
+    if (activeTab === "clients") {
+        // Activate the Clients tab
+        const clientsTab = document.getElementById("clients-tab");
+        clientsTab.classList.remove("disabled");
+        clientsTab.setAttribute("data-bs-toggle", "tab");
+        clientsTab.setAttribute("data-bs-target", "#clients");
+
+        const tabTrigger = new bootstrap.Tab(clientsTab);
+        tabTrigger.show();
+    } else {
+        // Default to the General tab
+        const generalTab = document.getElementById("general-tab");
+        const tabTrigger = new bootstrap.Tab(generalTab);
+        tabTrigger.show();
+    }
 });
+
+
 </script>
+    
  </body>
 </html>
