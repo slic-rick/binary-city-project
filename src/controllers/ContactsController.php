@@ -14,9 +14,9 @@ class ContactsController extends Controller{
 
         $contacts = $contact -> getContacts();
 
-        echo "<pre>";
-        echo print_r($contacts);
-        echo "</pre>";
+        // echo "<pre>";
+        // echo print_r($contacts);
+        // echo "</pre>";
         $this->renderView('contacts/index', ['contacts' => $contacts]);
     }
 
