@@ -1,0 +1,14 @@
+{
+    "name": "erik/binarycity",
+    "autoload": {
+        "psr-4": {
+            "Framework\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Erikson"
+        }
+    ],
+    "require": {}
+}
