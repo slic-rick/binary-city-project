@@ -59,11 +59,10 @@ class Contact{
     }
 
     public function saveLinkedContact($clientIds,$contactId)  {
-        // $data =  [];
         foreach ($clientIds as $key => $value) {
             $query = "insert into clientlinkcontact (clientId,contactId) values (:clientId, :contactId)";
             $data = array('contactId' => $contactId, 'clientId' => $value);
-            $result = $this -> database ->query($query, $data);   
+            $result = $this -> database ->query($query, $data);
         }
     
     }

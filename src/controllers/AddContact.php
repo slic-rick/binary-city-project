@@ -34,8 +34,6 @@ class AddContact extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['client_ids'])) {
             $clientIds = $_POST['client_ids']; // Array of selected contact IDs
-            
-
 
             // Get the last insertedId
             $contactId = $contact->getlastInsertedId();
@@ -44,10 +42,6 @@ class AddContact extends Controller {
             $contactClients = $contact -> getContactClients($contactId);
 
             $data['contactClients'] = $contactClients;
-
-            // echo "<pre>";
-            // echo print_r($data['contactClients']);
-            // echo "</pre>";
 
         }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
             if(!empty($_POST)){
@@ -58,12 +52,6 @@ class AddContact extends Controller {
         $clients = $client -> getClients();
 
         $data['clients'] = $clients;
-
-        // echo "<pre>";
-        // echo print_r($data);
-        // echo "</pre>";
-
-
 
         $this->renderView('addContact/index', ['data' => $data]);
     }

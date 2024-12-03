@@ -13,10 +13,6 @@ class ContactsController extends Controller{
         $contact = new Contact;
 
         $contacts = $contact -> getContacts();
-
-        // echo "<pre>";
-        // echo print_r($contacts);
-        // echo "</pre>";
         $this->renderView('contacts/index', ['contacts' => $contacts]);
     }
 

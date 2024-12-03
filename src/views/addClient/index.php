@@ -98,7 +98,7 @@
                     </div>
                     <div class="modal-body">
                         <form id="linkContactsForm" action ="/add-client?tab=contacts" method="POST">
-                        <!-- <input type="hidden" name="client_id" value="<?= $data['client_id'] ?>" /> -->
+                        <input type="hidden" name="client_id" value="<?php echo isset($_GET['client']) ? htmlspecialchars($_GET['client']) : (isset($_SESSION['client_id']) ? htmlspecialchars($_SESSION['client_id']) : ''); ?>" />
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -114,9 +114,9 @@
                                     // Example data from the database (Replace with actual query results)
                                     foreach ($data['contacts'] as $contact) {
                                         echo "<tr>
-                                                <td><input type='checkbox' name='contact_ids[]' class='contact-checkbox' value='" . htmlspecialchars($contact['contact_id']) . "' /></td>
-                                                <td>" . htmlspecialchars($contact['contact_name']) . " " . htmlspecialchars($contact['contact_surname']) . "</td>
-                                                <td>" . htmlspecialchars($contact['contact_email']) . "</td>
+                                                <td><input type='checkbox' name='contact_ids[]' class='contact-checkbox' value='" . htmlspecialchars($contact['id']) . "' /></td>
+                                                <td>" . htmlspecialchars($contact['name']) . " " . htmlspecialchars($contact['surname']) . "</td>
+                                                <td>" . htmlspecialchars($contact['email']) . "</td>
                                               </tr>";
                                     }
                                     

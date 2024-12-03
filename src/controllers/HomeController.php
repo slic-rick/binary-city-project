@@ -14,15 +14,6 @@ class HomeController extends Controller{
 
          $clients =  $client -> getClients();
 
-        //  echo "<pre>";
-        //  print_r($users);
-        //  echo "</pre>";
-        
-        // $users = [
-        //     new User('John Doe', 'john@example.com'),
-        //     new User('Jane Doe', 'jane@example.com')
-        // ];
-
         $this->renderView('home/index', ['clients' => $clients]);
     }
 

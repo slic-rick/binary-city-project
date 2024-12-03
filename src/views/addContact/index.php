@@ -151,29 +151,6 @@
 
 
 <script>
-// document.getElementById("nextBtn").addEventListener("click", function (event) {
-//     event.preventDefault(); // Prevent default form submission
-
-//     const clientName = document.getElementById("clientName").value.trim();
-//     const clientEmail = document.getElementById("clientEmail").value.trim();
-
-//     if (clientName === "" || clientEmail === "") {
-//         alert("Please fill in all required fields.");
-//         return;
-//     }
-
-//     // Enable the Clients tab and switch to it
-//     const contactsTab = document.getElementById("clients-tab");
-//     contactsTab.classList.remove("disabled");
-//     contactsTab.setAttribute("data-bs-toggle", "tab");
-//     contactsTab.setAttribute("data-bs-target", "#clients");
-//     const tabTrigger = new bootstrap.Tab(contactsTab);
-//     tabTrigger.show();
-
-//     // Submit the form
-//     // document.getElementById("generalForm").submit();
-// });
-
 
 document.getElementById("nextBtn").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent default form submission behavior
