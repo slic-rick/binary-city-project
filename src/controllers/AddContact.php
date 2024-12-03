@@ -32,11 +32,13 @@ class AddContact extends Controller {
 
                     $contactClients = $contact -> getContactClients($contact_id);
                     $data['contactClients'] = $contactClients;
-				}
+				}else{
+                    echo "The client id and contact_id is empty";
+                }
 		
 				// Redirect back to the contacts tab to avoid duplicate form submissions
-				header("Location: /add-contact?tab=clients");
-				exit;
+				// header("Location: /add-contact?tab=clients");
+				// exit;
 			}
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['client_ids'])) {
@@ -66,7 +68,7 @@ class AddContact extends Controller {
 
 
 
-        }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+        }else if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])){
             if(!empty($_POST)){
                 $contactId = rand(10000000, 99999999);
 
