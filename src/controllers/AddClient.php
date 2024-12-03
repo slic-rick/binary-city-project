@@ -15,18 +15,25 @@ class AddClient extends Controller {
 
 			// Handle unlink contact request
 			if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unlink_contact') {
+
 				// Validate input
 				$contactId = $_POST['contact_id'] ?? null;
-				$clientId = $_POST['client_id'] ?? null;
+				$clientId = $_POST['client_id'] ?? $_SESSION['client_id'];
 
 				if ($contactId && $clientId) {
+
+
 					// Unlink the contact from the client
 					$client->unlinkContact($contactId, $clientId);
+
+					$clientContacts = $client -> getClientContacts($clientId);
+
+					$data['clientContacts'] = $clientContacts;
 				}
 
 				// Redirect back to the contacts tab to avoid duplicate form submissions
-				header("Location: /add-client?tab=contacts");
-				exit;
+				// header("Location: /add-client?tab=contacts");
+				// exit;
 			}
 
 		 // Check if form data exists
@@ -38,7 +45,7 @@ class AddClient extends Controller {
 						// $clientId = $client->getlastInsertedId();
 						$clientId = $_POST['client_id'] ?? $_SESSION['client_id'] ?? null;// Retrieve the 'client' parameter from the URL	
 					
-						echo "The client ID is: " . $clientId;
+						// echo "The client ID is: " . $clientId;
 
 						if(isset($clientId)){
 
@@ -52,7 +59,7 @@ class AddClient extends Controller {
 						}
 			}
 
-			if ($_SERVER['REQUEST_METHOD'] == "POST"){
+			if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['name'])){
 
 						// Validate the data before saving to database!
 			

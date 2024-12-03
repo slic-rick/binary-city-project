@@ -21,10 +21,10 @@ class AddContact extends Controller {
 				$clientId = $_POST['client_id'];
                 $contact_id = $_SESSION['contact_id'];
 
-                echo "<pre>";
-                echo print_r($contact_id);
-                echo print_r($clientId);
-                echo "</pre>";
+                // echo "<pre>";
+                // echo print_r($contact_id);
+                // echo print_r($clientId);
+                // echo "</pre>";
 		
 				if ($clientId && $contact_id) {
 					// Unlink the contact from the client
@@ -33,7 +33,7 @@ class AddContact extends Controller {
                     $contactClients = $contact -> getContactClients($contact_id);
                     $data['contactClients'] = $contactClients;
 				}else{
-                    echo "The client id and contact_id is empty";
+                    // echo "The client id and contact_id is empty";
                 }
 		
 				// Redirect back to the contacts tab to avoid duplicate form submissions
@@ -43,18 +43,11 @@ class AddContact extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['client_ids'])) {
 
-            // echo "<pre>";
-            // echo print_r($_SESSION['contact_id']);
-            // echo "</pre>";
-
-            echo "We can save the contact clients";
+            // echo "We can save the contact clients";
             $clientIds = $_POST['client_ids']; // Array of selected contact IDs
 
             $contactId = $_POST['contact_id'] ?? $_SESSION['contact_id'] ?? null;
 
-            echo "<pre>";
-            echo print_r($contactId);
-            echo "</pre>";
 
             if(isset($contactId)){
                 $contact -> saveLinkedContact($_POST['client_ids'],$contactId);
@@ -73,8 +66,6 @@ class AddContact extends Controller {
                 $contactId = rand(10000000, 99999999);
 
                 $saveContact = array('id' => $contactId, 'email' => $_POST['email'], 'name' => $_POST['name'], 'surname' => $_POST['surname']);
-
-            
 
                 $contact -> insert($saveContact);
 

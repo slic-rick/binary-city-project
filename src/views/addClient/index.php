@@ -110,17 +110,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    // Example data from the database (Replace with actual query results)
-                                    foreach ($data['contacts'] as $contact) {
-                                        echo "<tr>
-                                                <td><input type='checkbox' name='contact_ids[]' class='contact-checkbox' value='" . htmlspecialchars($contact['id']) . "' /></td>
-                                                <td>" . htmlspecialchars($contact['name']) . " " . htmlspecialchars($contact['surname']) . "</td>
-                                                <td>" . htmlspecialchars($contact['email']) . "</td>
-                                              </tr>";
-                                    }
-                                    
-                                    ?>
+
+                                <?php if(empty($data['contacts'])) { ?>
+                                    <tr>
+                                        <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts found!</td>
+                                    </tr>
+
+                               <?php } else { 
+                                        
+                                        // Example data from the database (Replace with actual query results)
+                                        foreach ($data['contacts'] as $contact) { ?>
+                                          <?php  echo "<tr>
+                                                    <td><input type='checkbox' name='contact_ids[]' class='contact-checkbox' value='" . htmlspecialchars($contact['id']) . "' /></td>
+                                                    <td>" . htmlspecialchars($contact['name']) . " " . htmlspecialchars($contact['surname']) . "</td>
+                                                    <td>" . htmlspecialchars($contact['email']) . "</td>
+                                                </tr>";
+                                       }
+                                } ?>
+
+                       
                                 </tbody>
                             </table>
                             <div class="modal-footer">

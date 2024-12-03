@@ -85,7 +85,7 @@
                 </div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linkContactsModal">Link Clients</button>
-                    <button class="btn btn-primary me-md-2" type="button">Save</button>
+                    <button class="btn btn-primary me-md-2" type="button" onclick="window.location.href='/contacts';">Save</button>
                     <!-- <button class="btn btn-primary" type="button">Button</button> -->
                 </div>
             </div>
