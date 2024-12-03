@@ -36,9 +36,7 @@ class AddClient extends Controller {
 
 						// // Get the last insertedId
 						// $clientId = $client->getlastInsertedId();
-						$clientId = $_POST['client_id'] ?? $_SESSION['client_id'] ?? null;// Retrieve the 'client' parameter from the URL
-
-						
+						$clientId = $_POST['client_id'] ?? $_SESSION['client_id'] ?? null;// Retrieve the 'client' parameter from the URL	
 					
 						echo "The client ID is: " . $clientId;
 

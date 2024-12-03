@@ -6,6 +6,9 @@ require '../src/core/config.php';
 set_include_path(__DIR__ . '/../src/views/');
 ini_set('display_errors', 1);
 
+// session
+session_start();
+
 
 $uri = $_SERVER['REQUEST_URI'];
 

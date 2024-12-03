@@ -65,15 +65,14 @@
             <?php } else {
                 $count = 1; // Counter for row numbers
                 foreach ($data['contactClients'] as $client) { ?>
-                    <tr id="contact-row-<?php echo $contact['contact_id']; ?>">
+                    <tr>
                         <th scope="row"><?php echo $count++; ?></th>
                         <td><?php echo htmlspecialchars($client['client_name'], ENT_QUOTES, 'UTF-8')  ?></td>
                         <td><?php echo htmlspecialchars($client['client_code'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td>
                             <form method="POST" action="/add-contact?tab=clients">
                                 <input type="hidden" name="action" value="unlink_client">
-                                <input type="hidden" name="id" value="<?php echo $client['client_id']; ?>">
-                              
+                                <input type="hidden" name="client_id" value="<?php echo $client['client_id']; ?>"> 
                                 <button type="submit" class="btn btn-danger btn-sm unlink-contact-btn">Unlink</button>
                             </form>
                         </td>
@@ -102,6 +101,7 @@
                     </div>
                     <div class="modal-body">
                         <form id="linkContactsForm" action="add-contact?tab=clients" method="POST">
+                        <input type="hidden" name="contact_id" value="<?php echo isset($_GET['contact']) ? htmlspecialchars($_GET['contact']) : (isset($_SESSION['contact_id']) ? htmlspecialchars($_SESSION['contact_id']) : ''); ?>" />
                             <table class="table table-hover">
                                 <thead>
                                     <tr>

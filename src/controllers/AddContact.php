@@ -18,13 +18,20 @@ class AddContact extends Controller {
         		      // Handle unlink contact request
 			  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unlink_client') {
 				// Validate input
-				$clientId = $_POST['client_id'] ?? null;
-                $contact_id = $_POST['contact_id'] ?? null;
-			
+				$clientId = $_POST['client_id'];
+                $contact_id = $_SESSION['contact_id'];
+
+                echo "<pre>";
+                echo print_r($contact_id);
+                echo print_r($clientId);
+                echo "</pre>";
 		
-				if ($clientId) {
+				if ($clientId && $contact_id) {
 					// Unlink the contact from the client
 					$contact->unlinkContact($clientId,$contact_id);
+
+                    $contactClients = $contact -> getContactClients($contact_id);
+                    $data['contactClients'] = $contactClients;
 				}
 		
 				// Redirect back to the contacts tab to avoid duplicate form submissions
@@ -33,19 +40,48 @@ class AddContact extends Controller {
 			}
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['client_ids'])) {
+
+            // echo "<pre>";
+            // echo print_r($_SESSION['contact_id']);
+            // echo "</pre>";
+
+            echo "We can save the contact clients";
             $clientIds = $_POST['client_ids']; // Array of selected contact IDs
 
-            // Get the last insertedId
-            $contactId = $contact->getlastInsertedId();
-            $contact -> saveLinkedContact($_POST['client_ids'],$contactId);
+            $contactId = $_POST['contact_id'] ?? $_SESSION['contact_id'] ?? null;
 
-            $contactClients = $contact -> getContactClients($contactId);
+            echo "<pre>";
+            echo print_r($contactId);
+            echo "</pre>";
 
-            $data['contactClients'] = $contactClients;
+            if(isset($contactId)){
+                $contact -> saveLinkedContact($_POST['client_ids'],$contactId);
+                $contactClients = $contact -> getContactClients($contactId);
+                $data['contactClients'] = $contactClients;
+            }else {
+                echo "Contact id Is empty";
+            }
+
+            // header("Location: /add-contact?tab=clients&contact=$contactId");
+
+
 
         }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
             if(!empty($_POST)){
-                $contact -> insert($_POST);
+                $contactId = rand(10000000, 99999999);
+
+                $saveContact = array('id' => $contactId, 'email' => $_POST['email'], 'name' => $_POST['name'], 'surname' => $_POST['surname']);
+
+            
+
+                $contact -> insert($saveContact);
+
+                // if($contact){
+                $_SESSION['contact_id'] = $contactId;
+
+                header("Location: /add-contact?tab=clients&contact=$contactId");
+
+                // }
             }
         }
 
