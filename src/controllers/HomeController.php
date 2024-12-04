@@ -9,7 +9,7 @@ use Framework\Core\Database;
 class HomeController extends Controller{
 
     public function index() {
-
+        $_SESSION = [];
         $client = new Client();
 
          $clients =  $client -> getClients();

@@ -15,8 +15,8 @@ class AddContact extends Controller {
         $contact = new Contact;
         $client = new Client;
 
-        		      // Handle unlink contact request
-			  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unlink_client') {
+        // Handle unlink contact request
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unlink_client') {
 				// Validate input
 				$clientId = $_POST['client_id'];
                 $contact_id = $_SESSION['contact_id'];

@@ -30,15 +30,34 @@
                 <form id="generalForm" class="needs-validation" action="/add-client" method="POST" novalidate>
                     <div class="mb-3">
                         <label for="name" class="form-label">Client Name</label>
-                        <input type="text" class="form-control <?= !empty($data['errors']) ? 'is-invalid' : '' ?>" id="name" name="name" placeholder="Enter client name" >
+                        <input type="text" 
+                        class="form-control <?= !empty($data['errors']) ? 'is-invalid' : '' ?>" 
+                        id="name" name="name" 
+                        placeholder="Enter client name" 
+                        value="<?php if(isset($_SESSION['client'])){ echo htmlspecialchars($_SESSION['client']['name']); }else {echo "";} ?>"
+                        <?= isset($_SESSION['client']) ? 'readonly' : '' ?>
+                        >
                         <?php if (!empty($data['errors'])): ?>
                             <div class="invalid-feedback">
                                 <?= htmlspecialchars($data['errors'][0]) ?>
                             </div>
                         <?php endif; ?>
 
+                        <div class="mb-3" id="clientCodeContainer" style="display: <?= isset($_SESSION['client']) ? 'block' : 'none' ?>;">
+                            <label for="clientCode" class="form-label">Client Code</label>
+                            <input 
+                                type="text" 
+                                id="clientCode" 
+                                name="clientCode" 
+                                class="form-control" 
+                                value="<?= htmlspecialchars($_SESSION['client']['clientCode'] ?? '') ?>" 
+                                readonly
+                            >
+                        </div>
+
                     </div>
-                    <button type="submit" class="btn btn-primary" id="nextBtn">Next</button>
+                    
+                    <button type="submit" class="btn btn-primary" id="nextBtn"  style="<?= !empty($_SESSION['client']) ? 'display: none;' : '' ?>">Next</button>
                 </form>
             </div>
 
@@ -90,7 +109,7 @@
             </div>
         </div>
 
-                    <!-- Link Contacts Modal -->
+        <!-- Link Contacts Modal -->
         <div class="modal fade" id="linkContactsModal" tabindex="-1" aria-labelledby="linkContactsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">

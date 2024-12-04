@@ -61,60 +61,57 @@ class AddClient extends Controller {
 
 			if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['name'])){
 
-						$savedClient = $client -> getClientName($_POST['name']);
+						// $savedClient = $client -> getClientName($_POST['name']);
 
-						if($savedClient){
-							$clientId = $_SESSION['client_id'];
-							$data['client'] = $existingClient;
-							header("Location: /add-client?tab=contacts&client=$clientId");
-							exit;
-						}else{
+						// if($savedClient){
+						// 	$clientId = $_SESSION['client_id'];
+						// 	$data['client'] = $existingClient;
+						// 	header("Location: /add-client?tab=contacts&client=$clientId");
+						// 	exit;
+						// }else{
 
-													// Validate form input
-						$errors = $this->validate($_POST,$client);
+							// Validate form input
+							$errors = $this->validate($_POST,$client);
 
-						// // Debugging validation errors
-						// echo "<pre>";
-						// print_r($errors);
-						// echo "</pre>";
+							if (empty($errors)) {
+								// Generate client code
+								$clientCode = $this->generateClientCode($_POST['name']);
+							
+								// Generate a random 8-digit number (you can adjust this as needed)
+								$saveClientId = rand(10000000, 99999999);
+							
+								$newClient = array('name' => $_POST['name'],'clientCode' => $clientCode, 'id' =>$saveClientId);
 
-					if (empty($errors)) {
-						// Generate client code
-						$clientCode = $this->generateClientCode($_POST['name']);
-						// $_POST['clientCode'] = $clientCode;
+								// Insert client data
+								$result = $client->insert($newClient);
+
+								$_SESSION['client_id'] = $saveClientId;
+								$_SESSION['client'] = $newClient;
 
 
-						// Generate a random 8-digit number (you can adjust this as needed)
-						$saveClientId = rand(10000000, 99999999);
-						// $_POST['id'] = $saveClientId;
+								// If the client got inserted, then get all the clients
+								if($result){
+									// echo "client inserted!";
+									$clientContacts = $client -> getClientContacts($saveClientId);
+									$data['clientContacts'] = $clientContacts;
+									// $_SESSION['client'] = $newClient;
+									
+								}
 
-						$newClient = array('name' => $_POST['name'],'clientCode' => $clientCode, 'id' =>$saveClientId);
+								
+								$data['client_id'] = $saveClientId;
 
-						// Insert client data
-						$result = $client->insert($newClient);
+								// echo "<pre>";
+								// print_r($data);
+								// echo "</pre>";
 
-						$_SESSION['client_id'] = $saveClientId;
+								header("Location: /add-client?tab=contacts&client=$saveClientId");
+								exit;
+							} else {
+								$data['errors'] = $errors;
+							}
 
-						// If the client got inserted, then get all the clients
-						if($result){
-
-							$clientContacts = $client -> getClientContacts($saveClientId);
-							$data['clientContacts'] = $clientContacts;
-							$data['client'] = $newClient;
-							// $data['clientContacts'] = $clientContacts;
-
-						}
-
-						
-						$data['client_id'] = $saveClientId;
-
-						header("Location: /add-client?tab=contacts&client=$saveClientId");
-						exit;
-					} else {
-						$data['errors'] = $errors;
-					}
-
-						}
+						// }
 
 			
 					}
@@ -143,9 +140,9 @@ class AddClient extends Controller {
 			$errors[] = "Name is required.";
 		} 
 		// Check if name is too short
-		else if (strlen($data['name']) < 3) {
-			$errors[] = "The name is too short.";
-		} 
+		// else if (strlen($data['name']) < 3) {
+		// 	$errors[] = "The name is too short.";
+		// } 
 		// Check if the client already exists
 		else if ($client->getClientName($data['name'])) {
 			$errors[] = "The client is already saved!";
@@ -155,19 +152,49 @@ class AddClient extends Controller {
 	}
 	
 
-    private function generateClientCode($clientName)
-	{
+    // private function generateClientCode($clientName)
+	// {
+	// 	$clientName = strtoupper($clientName);
+	// 	$prefix = substr($clientName, 0, 3);
+
+	// 	// If the client name is shorter than 3 characters, pad with additional characters
+	// 	if (strlen($prefix) < 3) {
+	// 		$prefix = str_pad($prefix, 3, 'A');
+	// 	}
+
+	// 	// Ensure the prefix is exactly 3 characters long
+	// 	$prefix = substr($prefix, 0, 3);
+
+	// 	$client = new Client;
+	// 	$counter = 1;
+	// 	do {
+	// 		$numericPart = str_pad($counter, 3, '0', STR_PAD_LEFT);
+	// 		$clientCode = $prefix . $numericPart;
+	// 		$counter++;
+	// 	} while ($client->clientCodeExists($clientCode));
+
+	// 	return $clientCode;
+	// }
+
+
+	private function generateClientCode($clientName) {
 		$clientName = strtoupper($clientName);
-		$prefix = substr($clientName, 0, 3);
-
-		// If the client name is shorter than 3 characters, pad with additional characters
-		if (strlen($prefix) < 3) {
-			$prefix = str_pad($prefix, 3, 'A');
+	
+		// Split the name into words
+		$words = explode(' ', $clientName);
+	
+		// Handle different name lengths
+		if (count($words) >= 3) {
+			// Take the first letter of each of the first 3 words
+			$prefix = substr($words[0], 0, 1) . substr($words[1], 0, 1) . substr($words[2], 0, 1);
+		} else {
+			// Pad shorter names with 'A'
+			$prefix = str_pad(substr($clientName, 0, 3), 3, 'A');
 		}
-
+	
 		// Ensure the prefix is exactly 3 characters long
 		$prefix = substr($prefix, 0, 3);
-
+	
 		$client = new Client;
 		$counter = 1;
 		do {
@@ -175,8 +202,13 @@ class AddClient extends Controller {
 			$clientCode = $prefix . $numericPart;
 			$counter++;
 		} while ($client->clientCodeExists($clientCode));
-
+	
 		return $clientCode;
 	}
+	
+	
+	
+	
+
 
 }

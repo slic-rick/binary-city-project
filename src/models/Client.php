@@ -54,7 +54,8 @@ class Client{
     
         // Check if any rows were returned
         if (!empty($result)) {
-            return $result[0]; // Return the first matching row
+            // return $result[0]; // Return the first matching row
+            return true;
         }
     
         // Return false if no match was found
