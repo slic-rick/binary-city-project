@@ -75,7 +75,7 @@
 
                         <div class="sidebar__actions">
                         <button>
-                            <i class="ri-moon-clear-fill sidebar__link sidebar__theme" id="theme-button">
+                            <i class="ri-moon-clear-fill sidebar__link sidebar__theme" id="theme">
                                 <span>Theme</span>
                             </i>
                         </button>
