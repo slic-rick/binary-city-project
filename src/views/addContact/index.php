@@ -25,25 +25,73 @@
 
         <!-- Tabs Content -->
         <div class="tab-content p-3 border border-top-0" id="addClientTabsContent">
-            <!-- General Tab -->
-            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                <form id="generalForm" action="/add-contact" method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter client name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="surname" class="form-label">Surname</label>
-                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter client surname" required>
-                    </div>
+ <!-- General Tab -->
+<div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+    <form id="generalForm" class="needs-validation" action="/add-contact" method="POST" novalidate>
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input 
+                type="text" 
+                class="form-control <?= !empty($data['errors']['name']) ? 'is-invalid' : '' ?>"  
+                id="name" 
+                name="name" 
+                placeholder="Enter client name" 
+                value="<?php if(isset($_SESSION['contact']) ) { echo htmlspecialchars($_SESSION['contact']['name'] ?? ''); }?>" 
+                <?php isset($_SESSION['contact']) ? 'readonly' : '' ?>
+            >
+            <?php if (!empty($data['errors']['name'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($data['errors']['name']) ?>
+                </div>
+            <?php endif; ?>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter client email" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="nextBtn">Next</button>
-                </form>
+        <!-- Surname Field -->
+        <div class="mb-3">
+            <label for="surname" class="form-label">Surname</label>
+            <input 
+                type="text" 
+                class="form-control <?= !empty($data['errors']['surname']) ? 'is-invalid' : '' ?>"  
+                id="surname" 
+                name="surname" 
+                placeholder="Enter client surname" 
+                value="<?php if(isset($_SESSION['contact']) ) { echo htmlspecialchars($_SESSION['contact']['surname'] ?? ''); }?>"
+                <?php isset($_SESSION['contact']) ? 'readonly' : '' ?>
+            >
+            <?php if (!empty($data['errors']['surname'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($data['errors']['surname']) ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Email Field -->
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input 
+                type="email" 
+                class="form-control <?= !empty($data['errors']['email']) ? 'is-invalid' : '' ?>"  
+                id="email" 
+                name="email" 
+                placeholder="Enter client email" 
+                value="<?php if(isset($_SESSION['contact']) ) {echo htmlspecialchars($_SESSION['contact']['email'] ?? ''); }?>"
+                <?php isset($_SESSION['contact']) ? 'readonly' : '' ?>
+            >
+            <?php if (!empty($data['errors']['email'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($data['errors']['email']) ?>
+                </div>
+            <?php endif; ?>
             </div>
+                <?php if(empty($_SESSION)) ?>
+
+        <button type="submit" class="btn btn-primary" id="nextTBtn"  style="<?= !empty($_SESSION['contact']) ? 'display: none;' : '' ?>">Next</button>
+
+        <!-- <button type="submit" class="btn btn-primary" id="nextTBtn">Next</button> -->
+    </form>
+</div>
+
 
             <!-- Contacts Tab -->
             <div class="tab-pane fade" id="clients" role="tabpanel" aria-labelledby="clients-tab">
@@ -152,31 +200,33 @@
 
 <script>
 
-document.getElementById("nextBtn").addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent default form submission behavior
-
-    const clientName = document.getElementById("name").value.trim();
-    const clientEmail = document.getElementById("email").value.trim();
-
-    if (clientName === "" || clientEmail === "") {
-        alert("Please fill in all required fields.");
-        return;
-    }
+document.getElementById("nextTBtn").addEventListener("click", function () {
+    // event.preventDefault(); // Prevent default form submission behavior
 
     // Enable the Clients tab and switch to it
+    // const contactsTab = document.getElementById("clients-tab");
+    // contactsTab.classList.remove("disabled");
+    // contactsTab.setAttribute("data-bs-toggle", "tab");
+    // contactsTab.setAttribute("data-bs-target", "#clients");
+
+    // const tabTrigger = new bootstrap.Tab(contactsTab);
+    // tabTrigger.show();
+
     const contactsTab = document.getElementById("clients-tab");
     contactsTab.classList.remove("disabled");
     contactsTab.setAttribute("data-bs-toggle", "tab");
     contactsTab.setAttribute("data-bs-target", "#clients");
-
     const tabTrigger = new bootstrap.Tab(contactsTab);
     tabTrigger.show();
 
+    // Allow the form to submit
+    event.target.form.submit();
+
     // Add the active tab to the URL
-    const form = document.getElementById("generalForm");
-    const url = new URL(form.action, window.location.origin);
-    url.searchParams.set("tab", "clients");
-    form.action = url.toString();
+    // const form = document.getElementById("generalForm");
+    // const url = new URL(form.action, window.location.origin);
+    // url.searchParams.set("tab", "clients");
+    // form.action = url.toString();
 
     // Submit the form programmatically
     form.submit();
@@ -203,6 +253,30 @@ document.addEventListener("DOMContentLoaded", function () {
         tabTrigger.show();
     }
 });
+
+
+</script>
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
 
 
 </script>

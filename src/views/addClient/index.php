@@ -179,13 +179,13 @@
     
 <script>
 document.getElementById("nextBtn").addEventListener("click", function () {
-    const clientName = document.getElementById("name").value.trim();
-    const clientEmail = document.getElementById("email").value.trim();
+    // const clientName = document.getElementById("name").value.trim();
+    // const clientEmail = document.getElementById("email").value.trim();
 
-    if (clientName === "" || clientEmail === "") {
-        alert("Please fill in all required fields.");
-        return;
-    }
+    // if (clientName === "" || clientEmail === "") {
+    //     alert("Please fill in all required fields.");
+    //     return;
+    // }
 
     // Enable the Contacts tab and switch to it
     const contactsTab = document.getElementById("contacts-tab");

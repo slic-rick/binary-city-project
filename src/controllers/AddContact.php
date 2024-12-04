@@ -36,9 +36,7 @@ class AddContact extends Controller {
                     // echo "The client id and contact_id is empty";
                 }
 		
-				// Redirect back to the contacts tab to avoid duplicate form submissions
-				// header("Location: /add-contact?tab=clients");
-				// exit;
+				
 			}
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['client_ids'])) {
@@ -57,24 +55,39 @@ class AddContact extends Controller {
                 echo "Contact id Is empty";
             }
 
-            // header("Location: /add-contact?tab=clients&contact=$contactId");
+      
 
 
 
-        }else if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])){
+        }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
             if(!empty($_POST)){
-                $contactId = rand(10000000, 99999999);
 
-                $saveContact = array('id' => $contactId, 'email' => $_POST['email'], 'name' => $_POST['name'], 'surname' => $_POST['surname']);
+                $errors = $this -> validate($_POST,$contact);
 
-                $contact -> insert($saveContact);
+                if(empty($errors)){
 
-                // if($contact){
-                $_SESSION['contact_id'] = $contactId;
+                    $contactId = rand(10000000, 99999999);
 
-                header("Location: /add-contact?tab=clients&contact=$contactId");
+                    $saveContact = array('id' => $contactId, 'email' => $_POST['email'], 'name' => $_POST['name'], 'surname' => $_POST['surname']);
 
-                // }
+                    $contact -> insert($saveContact);
+
+                    // if($contact){
+                    $_SESSION['contact_id'] = $contactId;
+
+                    $_SESSION['contact'] = $saveContact;
+
+                    header("Location: /add-contact?tab=clients&contact=$contactId");
+
+                }else{
+                    // The form has some errors
+             
+                    $data['errors'] = $errors;
+                    // echo "<pre>";
+                    // print_r($data);
+                    // echo "</pre>";
+                }
+
             }
         }
 
@@ -84,5 +97,41 @@ class AddContact extends Controller {
 
         $this->renderView('addContact/index', ['data' => $data]);
     }
+
+    private function validate($data, $contact)
+	{
+		$errors = array();
+
+	
+		// Check if name is empty
+		if (empty($data['name'])) {
+			$errors['name'] = "Name is required.";
+		} 
+		// Check if name is too short
+		else if (strlen($data['name']) < 3) {
+			$errors['name'] = "The name is too short.";
+		}
+        else if (empty($data['surname'])) {
+			$errors['surname'] = "Surname is required.";
+		} 
+		// Check if name is too short
+		else if (strlen($data['surname']) < 3) {
+			$errors['surname'] = "The name is too short.";
+		} 
+        else if (empty($data['email']) ) {
+			$errors['email'] = "Email is required!";
+		}
+		// Check if the contact email already exists
+		else if ($contact->isContactSaved($data['email'])) {
+			$errors['email'] = "The contact email is already saved!";
+		}
+
+       // Add regex to validate email format
+        else if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = "The email address is not valid.";
+        }
+	
+		return $errors;
+	}
 
 }

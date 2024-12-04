@@ -117,5 +117,32 @@ class Contact{
     return $this->database->query($stmt, $data);
         
     }
+
+    public function isContactSaved($contactEmail) {
+        // SQL query to check if the client exists
+        $stmt = '
+            SELECT 
+                id
+            FROM 
+                contact 
+            WHERE 
+                email = :contactEmail
+            LIMIT 1
+        ';
+    
+        // Execute the query with the provided client name
+        $result = $this->database->query($stmt, [
+            ':contactEmail' => $contactEmail
+        ]);
+    
+        // Check if any rows were returned
+        if (!empty($result)) {
+            // return $result[0]; // Return the first matching row
+            return true;
+        }
+    
+        // Return false if no match was found
+        return false;
+    }
     
 }

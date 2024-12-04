@@ -61,60 +61,50 @@ class AddClient extends Controller {
 
 			if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['name'])){
 
-						// $savedClient = $client -> getClientName($_POST['name']);
 
-						// if($savedClient){
-						// 	$clientId = $_SESSION['client_id'];
-						// 	$data['client'] = $existingClient;
-						// 	header("Location: /add-client?tab=contacts&client=$clientId");
-						// 	exit;
-						// }else{
+				// Validate form input
+				$errors = $this->validate($_POST,$client);
 
-							// Validate form input
-							$errors = $this->validate($_POST,$client);
+				if (empty($errors)) {
+					// Generate client code
+					$clientCode = $this->generateClientCode($_POST['name']);
+				
+					// Generate a random 8-digit number (you can adjust this as needed)
+					$saveClientId = rand(10000000, 99999999);
+				
+					$newClient = array('name' => $_POST['name'],'clientCode' => $clientCode, 'id' =>$saveClientId);
 
-							if (empty($errors)) {
-								// Generate client code
-								$clientCode = $this->generateClientCode($_POST['name']);
-							
-								// Generate a random 8-digit number (you can adjust this as needed)
-								$saveClientId = rand(10000000, 99999999);
-							
-								$newClient = array('name' => $_POST['name'],'clientCode' => $clientCode, 'id' =>$saveClientId);
+					// Insert client data
+					$result = $client->insert($newClient);
 
-								// Insert client data
-								$result = $client->insert($newClient);
-
-								$_SESSION['client_id'] = $saveClientId;
-								$_SESSION['client'] = $newClient;
+					$_SESSION['client_id'] = $saveClientId;
+					$_SESSION['client'] = $newClient;
 
 
-								// If the client got inserted, then get all the clients
-								if($result){
-									// echo "client inserted!";
-									$clientContacts = $client -> getClientContacts($saveClientId);
-									$data['clientContacts'] = $clientContacts;
-									// $_SESSION['client'] = $newClient;
-									
-								}
+					// If the client got inserted, then get all the clients
+					if($result){
+						// echo "client inserted!";
+						$clientContacts = $client -> getClientContacts($saveClientId);
+						$data['clientContacts'] = $clientContacts;
+						// $_SESSION['client'] = $newClient;
+						
+					}
 
-								
-								$data['client_id'] = $saveClientId;
+					
+					$data['client_id'] = $saveClientId;
 
-								// echo "<pre>";
-								// print_r($data);
-								// echo "</pre>";
+					// echo "<pre>";
+					// print_r($data);
+					// echo "</pre>";
 
-								header("Location: /add-client?tab=contacts&client=$saveClientId");
-								exit;
-							} else {
-								$data['errors'] = $errors;
-							}
-
-						// }
+					header("Location: /add-client?tab=contacts&client=$saveClientId");
+					exit;
+				} else {
+					$data['errors'] = $errors;
+				}
 
 			
-					}
+			}
 
 		
 				$contacts = $client -> getAllContacts();
@@ -206,9 +196,4 @@ class AddClient extends Controller {
 		return $clientCode;
 	}
 	
-	
-	
-	
-
-
 }
