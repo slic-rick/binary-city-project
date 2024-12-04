@@ -53,25 +53,25 @@
                         </div>
 
                         <div class="sidebar__content">
-                        <div>
-                            <h3 class="sidebar__title">MANAGE</h3>
+                            <div>
+                                <h3 class="sidebar__title">MANAGE</h3>
 
-                            <div class="sidebar__list">
-                                <a href="/" class="sidebar__link active-link text-decoration-none">
-                                    <!-- <i class="ri-pie-chart-2-fill"></i> -->
-                                    <i class="ri-service-line"></i>
-                                    <span>Clients</span>
-                                </a>
-                                
-                                <a href="/contacts" class="sidebar__link text-decoration-none">
-                                    <!-- <i class="ri-wallet-3-fill"></i> -->
-                                    <i class="ri-contacts-book-line"></i>
-                                    <span>Contacts</span>
-                                </a>
+                                <div class="sidebar__list">
+                                    <!-- Clients Link -->
+                                    <a href="/" class="sidebar__link text-decoration-none <?= ($_SERVER['REQUEST_URI'] === '/' || strpos($_SERVER['REQUEST_URI'], 'add-client') !== false) ? 'active-link' : '' ?>">
+                                        <i class="ri-service-line"></i>
+                                        <span>Clients</span>
+                                    </a>
+
+                                    <!-- Contacts Link -->
+                                    <a href="/contacts" class="sidebar__link text-decoration-none <?= ($_SERVER['REQUEST_URI'] === '/contacts' || strpos($_SERVER['REQUEST_URI'], 'add-contact') !== false) ? 'active-link' : '' ?>">
+                                        <i class="ri-contacts-book-line"></i>
+                                        <span>Contacts</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
-                        </div>
 
                         <div class="sidebar__actions">
                         <button>
