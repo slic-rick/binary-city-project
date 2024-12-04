@@ -34,6 +34,34 @@ class Client{
         return $result;
     }
 
+    public function getClientName($clientName) {
+        // SQL query to check if the client exists
+        $stmt = '
+            SELECT 
+                id, 
+                name 
+            FROM 
+                client 
+            WHERE 
+                name = :clientName
+            LIMIT 1
+        ';
+    
+        // Execute the query with the provided client name
+        $result = $this->database->query($stmt, [
+            ':clientName' => $clientName
+        ]);
+    
+        // Check if any rows were returned
+        if (!empty($result)) {
+            return $result[0]; // Return the first matching row
+        }
+    
+        // Return false if no match was found
+        return false;
+    }
+    
+
     public function insert($data) {
         $keys = array_keys($data);
 
@@ -63,6 +91,8 @@ class Client{
         $result = $this -> database ->query($query, $data);
         return !empty($result);
     }
+
+
 
 
     public  function getlastInsertedId()  {

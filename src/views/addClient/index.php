@@ -27,15 +27,17 @@
         <div class="tab-content p-3 border border-top-0" id="addClientTabsContent">
             <!-- General Tab -->
             <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                <form id="generalForm" action="/add-client" method="POST">
+                <form id="generalForm" class="needs-validation" action="/add-client" method="POST" novalidate>
                     <div class="mb-3">
                         <label for="name" class="form-label">Client Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter client name" required>
+                        <input type="text" class="form-control <?= !empty($data['errors']) ? 'is-invalid' : '' ?>" id="name" name="name" placeholder="Enter client name" >
+                        <?php if (!empty($data['errors'])): ?>
+                            <div class="invalid-feedback">
+                                <?= htmlspecialchars($data['errors'][0]) ?>
+                            </div>
+                        <?php endif; ?>
+
                     </div>
-                    <!-- <div class="mb-3">
-                        <label for="clientEmail" class="form-label">Client Email</label>
-                        <input type="email" class="form-control" id="clientEmail" name="clientEmail" placeholder="Enter client email" required>
-                    </div> -->
                     <button type="submit" class="btn btn-primary" id="nextBtn">Next</button>
                 </form>
             </div>
@@ -194,6 +196,31 @@ document.addEventListener("DOMContentLoaded", function () {
         tabTrigger.show();
     }
 });
+</script>
+
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+
+
 </script>
     
 

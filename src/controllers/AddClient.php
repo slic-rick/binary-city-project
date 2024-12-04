@@ -61,47 +61,59 @@ class AddClient extends Controller {
 
 			if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['name'])){
 
-						// Validate the data before saving to database!
-			
-						// Validate form input
-						$errors = $this->validate($_POST);
+						$savedClient = $client -> getClientName($_POST['name']);
 
-						if (empty($errors)) {
-							// Generate client code
-							$clientCode = $this->generateClientCode($_POST['name']);
-							$_POST['clientCode'] = $clientCode;
-
-
-							// Generate a random 8-digit number (you can adjust this as needed)
-							$saveClientId = rand(10000000, 99999999);
-							$_POST['id'] = $saveClientId;
-
-
-							// Insert client data
-							$result = $client->insert($_POST);
-
-							$_SESSION['client_id'] = $saveClientId;
-
-							// If the client got inserted, then get all the clients
-							if($result){
-
-								if(isset($saveClientId)){
-
-									$clientContacts = $client -> getClientContacts($saveClientId);
-
-									$data['clientContacts'] = $clientContacts;
-
-								}
-
-							}
-
-							
-							$data['client_id'] = $saveClientId;
-
-							header("Location: /add-client?tab=contacts&client=$saveClientId");
+						if($savedClient){
+							$clientId = $_SESSION['client_id'];
+							$data['client'] = $existingClient;
+							header("Location: /add-client?tab=contacts&client=$clientId");
 							exit;
-						} else {
-							$data['errors'] = $errors;
+						}else{
+
+													// Validate form input
+						$errors = $this->validate($_POST,$client);
+
+						// // Debugging validation errors
+						// echo "<pre>";
+						// print_r($errors);
+						// echo "</pre>";
+
+					if (empty($errors)) {
+						// Generate client code
+						$clientCode = $this->generateClientCode($_POST['name']);
+						// $_POST['clientCode'] = $clientCode;
+
+
+						// Generate a random 8-digit number (you can adjust this as needed)
+						$saveClientId = rand(10000000, 99999999);
+						// $_POST['id'] = $saveClientId;
+
+						$newClient = array('name' => $_POST['name'],'clientCode' => $clientCode, 'id' =>$saveClientId);
+
+						// Insert client data
+						$result = $client->insert($newClient);
+
+						$_SESSION['client_id'] = $saveClientId;
+
+						// If the client got inserted, then get all the clients
+						if($result){
+
+							$clientContacts = $client -> getClientContacts($saveClientId);
+							$data['clientContacts'] = $clientContacts;
+							$data['client'] = $newClient;
+							// $data['clientContacts'] = $clientContacts;
+
+						}
+
+						
+						$data['client_id'] = $saveClientId;
+
+						header("Location: /add-client?tab=contacts&client=$saveClientId");
+						exit;
+					} else {
+						$data['errors'] = $errors;
+					}
+
 						}
 
 			
@@ -112,22 +124,36 @@ class AddClient extends Controller {
 
 				$data['contacts'] = $contacts;
 
+
+
 		// Get clientContacts
 
         $this->renderView('addClient/index', ['data' => $data]);
     }
 
-    private function validate($data)
+	private function validate($data, $client)
 	{
-  
 		$errors = [];
-
+	
+		// Debugging validation process
+		// echo "Validating the form...";
+	
+		// Check if name is empty
 		if (empty($data['name'])) {
 			$errors[] = "Name is required.";
+		} 
+		// Check if name is too short
+		else if (strlen($data['name']) < 3) {
+			$errors[] = "The name is too short.";
+		} 
+		// Check if the client already exists
+		else if ($client->getClientName($data['name'])) {
+			$errors[] = "The client is already saved!";
 		}
-
+	
 		return $errors;
 	}
+	
 
     private function generateClientCode($clientName)
 	{
