@@ -22,7 +22,7 @@
       <!--=============== HEADER ===============-->
       <header class="header" id="header">
          <div class="header__container">
-            <a href="#" class="header__logo">
+            <a href="https://github.com/slic-rick/binary-city-project" target=”_blank” class="header__logo text-decoration-none">
                <!-- <i class="ri-cloud-fill"></i> -->
                <i class="ri-github-fill"></i>
                <span>Github</span>
@@ -57,13 +57,13 @@
                             <h3 class="sidebar__title">MANAGE</h3>
 
                             <div class="sidebar__list">
-                                <a href="/" class="sidebar__link active-link">
+                                <a href="/" class="sidebar__link active-link text-decoration-none">
                                     <!-- <i class="ri-pie-chart-2-fill"></i> -->
                                     <i class="ri-service-line"></i>
                                     <span>Clients</span>
                                 </a>
                                 
-                                <a href="/contacts" class="sidebar__link">
+                                <a href="/contacts" class="sidebar__link text-decoration-none">
                                     <!-- <i class="ri-wallet-3-fill"></i> -->
                                     <i class="ri-contacts-book-line"></i>
                                     <span>Contacts</span>
