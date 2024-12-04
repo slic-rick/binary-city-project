@@ -29,7 +29,7 @@
                         <thead>
                             <tr>
                             <th scope="col">Name</th>
-                            <th scope="col">surname</th>
+                            <th scope="col">Full Name</th>
                             <th scope="col">Email Address</th>
                             <th scope="col">No. of linked clients</th>
                             </tr>
@@ -46,7 +46,7 @@
 
                             <tr>
                             <th scope="row"><?php echo $count++ ?></th>
-                            <td><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); htmlspecialchars($contact['surname'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars($contact['surname'], ENT_QUOTES, 'UTF-8'). " " . htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php echo htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php echo htmlspecialchars($contact['linked_clients_count'],ENT_QUOTES, 'UTF-8')?></td>
                             </tr>
@@ -65,10 +65,6 @@
         </div>
         
       </div>  
-      <!--=============== MAIN JS ===============-->
-      <!-- <script src="assets/js/main.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-   -->
      <?php   include "partials/_scripts.php"; ?>
     </body>
 </html>

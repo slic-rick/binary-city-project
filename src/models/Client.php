@@ -28,6 +28,8 @@ class Client{
                 clientlinkcontact clc ON c.id = clc.clientId
             GROUP BY 
                 c.id
+            ORDER BY
+                c.name ASC
         ';
         
         $result = $this->database->query($stmt, []);
@@ -131,18 +133,6 @@ class Client{
     }
 
     public function getAllContacts() {
-        // Join clientlinkcontact and contact tables to fetch contact details
-    //     $stmt = '
-    //     SELECT 
-    //         c.id AS contact_id,
-    //         c.name AS contact_name,
-    //         c.surname AS contact_surname,
-    //         c.email AS contact_email
-    //     FROM 
-    //         clientlinkcontact clc
-    //     JOIN 
-    //         contact c ON clc.contactId = c.id;
-    // ';
 
         $stmt = 'SELECT * FROM contact';
     

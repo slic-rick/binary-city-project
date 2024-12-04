@@ -28,7 +28,8 @@ class Contact{
             LEFT JOIN 
                 clientlinkcontact clc ON c.id = clc.contactId
             GROUP BY 
-                c.id;
+                c.id
+            ORDER BY c.surname ASC;
         ';
         
         try {
@@ -41,7 +42,6 @@ class Contact{
         }
     }
     
-
     
     public function insert($data) {
         // echo "<pre>";
@@ -110,11 +110,11 @@ class Contact{
         $stmt = '
         DELETE FROM clientlinkcontact 
         WHERE contactId = :contactId AND clientId = :clientId';
-    $data = [
-        'contactId' => $contactId,
-        'clientId' => $clientId
-    ];
-    return $this->database->query($stmt, $data);
+        $data = [
+            'contactId' => $contactId,
+            'clientId' => $clientId
+        ];
+         return $this->database->query($stmt, $data);
         
     }
 

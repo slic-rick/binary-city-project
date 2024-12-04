@@ -59,52 +59,48 @@ class AddClient extends Controller {
 						}
 			}
 
-			if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['name'])){
+			if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['name'])) {
 
-
+				// Sanitize inputs
+				$name = $this->sanitizeInput($_POST['name']);
+			
 				// Validate form input
-				$errors = $this->validate($_POST,$client);
-
+				$errors = $this->validate(['name' => $name], $client);
+			
 				if (empty($errors)) {
 					// Generate client code
-					$clientCode = $this->generateClientCode($_POST['name']);
-				
+					$clientCode = $this->generateClientCode($name);
+			
 					// Generate a random 8-digit number (you can adjust this as needed)
 					$saveClientId = rand(10000000, 99999999);
-				
-					$newClient = array('name' => $_POST['name'],'clientCode' => $clientCode, 'id' =>$saveClientId);
-
+			
+					$newClient = array(
+						'name' => $name,
+						'clientCode' => $clientCode,
+						'id' => $saveClientId
+					);
+			
 					// Insert client data
 					$result = $client->insert($newClient);
-
+			
 					$_SESSION['client_id'] = $saveClientId;
 					$_SESSION['client'] = $newClient;
-
-
+			
 					// If the client got inserted, then get all the clients
-					if($result){
-						// echo "client inserted!";
-						$clientContacts = $client -> getClientContacts($saveClientId);
+					if ($result) {
+						$clientContacts = $client->getClientContacts($saveClientId);
 						$data['clientContacts'] = $clientContacts;
-						// $_SESSION['client'] = $newClient;
-						
 					}
-
-					
+			
 					$data['client_id'] = $saveClientId;
-
-					// echo "<pre>";
-					// print_r($data);
-					// echo "</pre>";
-
+			
 					header("Location: /add-client?tab=contacts&client=$saveClientId");
 					exit;
 				} else {
 					$data['errors'] = $errors;
 				}
-
-			
 			}
+			
 
 		
 				$contacts = $client -> getAllContacts();
@@ -140,6 +136,20 @@ class AddClient extends Controller {
 	
 		return $errors;
 	}
+
+	private function sanitizeInput($input) {
+		// Trim the input
+		$input = trim($input);
+	
+		// Remove HTML and PHP tags
+		$input = strip_tags($input);
+	
+		// Convert special characters to HTML entities
+		$input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+	
+		return $input;
+	}
+	
 	
 
     // private function generateClientCode($clientName)

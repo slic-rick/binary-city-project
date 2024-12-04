@@ -59,37 +59,46 @@ class AddContact extends Controller {
 
 
 
-        }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
-            if(!empty($_POST)){
-
-                $errors = $this -> validate($_POST,$contact);
-
-                if(empty($errors)){
-
+        }else 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!empty($_POST)) {
+        
+                // Sanitize inputs
+                $sanitizedData = [
+                    'email' => $this->sanitizeInput($_POST['email']),
+                    'name' => $this->sanitizeInput($_POST['name']),
+                    'surname' => $this->sanitizeInput($_POST['surname']),
+                ];
+        
+                // Validate the sanitized input
+                $errors = $this->validate($sanitizedData, $contact);
+        
+                if (empty($errors)) {
                     $contactId = rand(10000000, 99999999);
-
-                    $saveContact = array('id' => $contactId, 'email' => $_POST['email'], 'name' => $_POST['name'], 'surname' => $_POST['surname']);
-
-                    $contact -> insert($saveContact);
-
-                    // if($contact){
+        
+                    $saveContact = array(
+                        'id' => $contactId,
+                        'email' => $sanitizedData['email'],
+                        'name' => $sanitizedData['name'],
+                        'surname' => $sanitizedData['surname']
+                    );
+        
+                    $contact->insert($saveContact);
+        
+                    // Save contact details to session
                     $_SESSION['contact_id'] = $contactId;
-
                     $_SESSION['contact'] = $saveContact;
-
+        
+                    // Redirect to the appropriate page
                     header("Location: /add-contact?tab=clients&contact=$contactId");
-
-                }else{
-                    // The form has some errors
-             
+                    exit;
+                } else {
+                    // Handle validation errors
                     $data['errors'] = $errors;
-                    // echo "<pre>";
-                    // print_r($data);
-                    // echo "</pre>";
                 }
-
             }
         }
+        
 
         $clients = $client -> getClients();
 
@@ -133,5 +142,20 @@ class AddContact extends Controller {
 	
 		return $errors;
 	}
+
+
+    private function sanitizeInput($input) {
+        // Trim the input
+        $input = trim($input);
+    
+        // Remove HTML and PHP tags
+        $input = strip_tags($input);
+    
+        // Convert special characters to HTML entities
+        $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+    
+        return $input;
+    }
+    
 
 }
