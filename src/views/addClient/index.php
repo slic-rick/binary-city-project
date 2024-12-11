@@ -27,38 +27,27 @@
         <div class="tab-content p-3 border border-top-0" id="addClientTabsContent">
             <!-- General Tab -->
             <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                <form id="generalForm" class="needs-validation" action="/add-client" method="POST" novalidate>
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Client Name</label>
-                        <input type="text" 
-                        class="form-control <?= !empty($data['errors']) ? 'is-invalid' : '' ?>" 
+            <form id="generalForm" method="POST" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Client Name</label>
+                    <input type="text" 
+                        class="form-control" 
                         id="name" name="name" 
-                        placeholder="Enter client name" 
-                        value="<?php if(isset($_SESSION['client'])){ echo htmlspecialchars($_SESSION['client']['name']); }else {echo "";} ?>"
-                        <?= isset($_SESSION['client']) ? 'readonly' : '' ?>
-                        >
-                        <?php if (!empty($data['errors'])): ?>
-                            <div class="invalid-feedback">
-                                <?= htmlspecialchars($data['errors'][0]) ?>
-                            </div>
-                        <?php endif; ?>
+                        placeholder="Enter client name">
+                    <div class="invalid-feedback" id="nameError"></div>
+                </div>
 
-                        <div class="mb-3" id="clientCodeContainer" style="display: <?= isset($_SESSION['client']) ? 'block' : 'none' ?>;">
-                            <label for="clientCode" class="form-label">Client Code</label>
-                            <input 
-                                type="text" 
-                                id="clientCode" 
-                                name="clientCode" 
-                                class="form-control" 
-                                value="<?= htmlspecialchars($_SESSION['client']['clientCode'] ?? '') ?>" 
-                                readonly
-                            >
-                        </div>
+                 <div class="mb-3" style="display: none;">
+                    <label for="clientCode" class="form-label">Client Code</label>
+                    <input type="text" 
+                        class="form-control" 
+                        id="clientCode" name="clientCode" 
+                        readonly>
+                    <div class="invalid-feedback" id="clientCodeError"></div>
+                </div>
+                <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+            </form>
 
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary" id="nextBtn"  style="<?= !empty($_SESSION['client']) ? 'display: none;' : '' ?>">Next</button>
-                </form>
             </div>
 
             <!-- Contacts Tab -->
@@ -164,21 +153,15 @@
         </div>
 
         <!-- TOAST -->
-         <?php if(isset($data['notification'])) {?>
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header">
-                        <img src="..." class="rounded me-2" alt="...">
-                        <strong class="me-auto">Bootstrap</strong>
-                        <small>Notification</small>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                            <div class="toast-body">
-                                <?php echo htmlspecialchars($data['notification']) ?>
-                    </div>
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Client saved successfully!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
-        <?php } ?>
+</div>
+
 
     </main>
 </div>
@@ -195,36 +178,119 @@
     <?php   include "partials/_scripts.php"; ?>
     
 <script>
-document.getElementById("nextBtn").addEventListener("click", function () {
+// document.getElementById("nextBtn").addEventListener("click", function () {
 
-    // Enable the Contacts tab and switch to it
-    const contactsTab = document.getElementById("contacts-tab");
-    contactsTab.classList.remove("disabled");
-    contactsTab.setAttribute("data-bs-toggle", "tab");
-    contactsTab.setAttribute("data-bs-target", "#contacts");
-    const tabTrigger = new bootstrap.Tab(contactsTab);
-    tabTrigger.show();
+//     // Enable the Contacts tab and switch to it
+//     const contactsTab = document.getElementById("contacts-tab");
+//     contactsTab.classList.remove("disabled");
+//     contactsTab.setAttribute("data-bs-toggle", "tab");
+//     contactsTab.setAttribute("data-bs-target", "#contacts");
+//     const tabTrigger = new bootstrap.Tab(contactsTab);
+//     tabTrigger.show();
 
-    // Allow the form to submit
-    event.target.form.submit();
-});
+//     // Allow the form to submit
+//     event.target.form.submit();
+// });
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const activeTab = urlParams.get("tab");
+// document.addEventListener("DOMContentLoaded", function () {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const activeTab = urlParams.get("tab");
 
-    if (activeTab === "contacts") {
-        // Activate the Contacts tab
-        const contactsTab = document.getElementById("contacts-tab");
-        contactsTab.classList.remove("disabled");
-        contactsTab.setAttribute("data-bs-toggle", "tab");
-        contactsTab.setAttribute("data-bs-target", "#contacts");
-        const tabTrigger = new bootstrap.Tab(contactsTab);
-        tabTrigger.show();
+//     if (activeTab === "contacts") {
+//         // Activate the Contacts tab
+//         const contactsTab = document.getElementById("contacts-tab");
+//         contactsTab.classList.remove("disabled");
+//         contactsTab.setAttribute("data-bs-toggle", "tab");
+//         contactsTab.setAttribute("data-bs-target", "#contacts");
+//         const tabTrigger = new bootstrap.Tab(contactsTab);
+//         tabTrigger.show();
+//     }
+// });
+document.getElementById("nextBtn").addEventListener("click", async () => {
+    const formData = new FormData(document.getElementById("generalForm"));
+
+    try {
+        console.log('Form data is', formData);
+
+        const response = await fetch('/add-client', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json', // Optional: Expecting a JSON response
+            },
+        });
+
+        const result = await response.json();
+        console.log('The result is', result);
+
+        // Clear previous error states
+        const nameInput = document.getElementById("name");
+        const nameError = document.getElementById("nameError");
+        nameError.textContent = ""; // Clear any previous error message
+        nameInput.classList.remove("is-invalid"); // Remove error styling
+
+        if (result.success) {
+            showToast("Client added successfully!");
+
+            // Enable the contacts tab and trigger the tab switch
+            const contactsTab = document.getElementById("contacts-tab");
+
+            // Remove the disabled class
+            contactsTab.classList.remove("disabled");
+
+            // Set the necessary Bootstrap data attributes
+            contactsTab.setAttribute("data-bs-toggle", "tab");
+            contactsTab.setAttribute("data-bs-target", "#contacts");
+
+            // Create a new Bootstrap Tab instance and show the contacts tab
+            const tabTrigger = new bootstrap.Tab(contactsTab);
+            tabTrigger.show();
+
+            addClientCodeField(result.client.clientCode);
+
+            // Change the "Next" button text to "Update"
+            const nextBtn = document.getElementById("nextBtn");
+            nextBtn.textContent = "Update";
+            nextBtn.classList.remove("btn-primary");
+            nextBtn.classList.add("btn-success"); 
+
+        } else if (result.errors) {
+            // Set the error message
+            if (result.errors.name) {
+                nameError.textContent = result.errors.name;
+                nameInput.classList.add("is-invalid");
+            }
+        }
+    } catch (error) {
+        console.error("Error:", error);
     }
 });
+
+
+function showToast(message) {
+    const toastMessage = document.getElementById('toastMessage');
+    const toastEl = document.getElementById('successToast');
+    toastMessage.textContent = message;
+
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}
+
+// Function to add the readonly clientCode field to the form
+// Function to add the readonly clientCode field to the form
+function addClientCodeField(clientCode) {
+    
+    const clientCodeInput = document.getElementById("clientCode");
+
+    clientCodeInput.closest('.mb-3').style.display = '';
+    
+    // Update the clientCode field with the new client code
+    clientCodeInput.value = clientCode;  // Set the clientCode value dynamically
+}
+
+
 </script>
 
 
