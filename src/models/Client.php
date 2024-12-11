@@ -95,9 +95,6 @@ class Client{
         return !empty($result);
     }
 
-
-
-
     public  function getlastInsertedId()  {
 
          $lastInsert =  $this -> database -> getLastSavedId();

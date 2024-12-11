@@ -7,6 +7,7 @@ use Framework\Core\Database;
 
 class AddClient extends Controller {
 
+	
 
     public function index() {
 
@@ -65,6 +66,9 @@ class AddClient extends Controller {
 			// 				echo "client id Not set";
 			// 			}
 			// }
+			if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
+				$this -> saveLinkedContacts();
+			}
 
 			if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
@@ -127,6 +131,68 @@ class AddClient extends Controller {
         $this->renderView('addClient/index', ['data' => $data]);
     }
 
+	private function saveLinkedContacts(){
+			 // Check if form data exists
+			// if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
+				$client = new Client;
+
+				$response['success'] = false;
+				$contactIds = $_POST['contact_ids']; // Array of selected contact IDs
+
+				// // Get the last insertedId
+				// $clientId = $client->getlastInsertedId();
+				$clientId =  $_SESSION['client_id'] ?? $_POST['client_id'] ?? null; // Retrieve the 'client' parameter from the URL	
+			
+				// echo "The client ID is: " . $clientId;
+
+				if(isset($clientId)){
+
+					$client -> saveLinkedContact($_POST['contact_ids'],$clientId);
+					$clientContacts = $client -> getClientContacts($clientId);
+
+					$response['success'] = true;
+					$response['linkedContacts'] = $clientContacts;
+
+
+				}else{
+					echo "client id Not set";
+				}
+				echo json_encode($response);
+				exit();
+			
+
+	}
+
+	public function getLinkedContacts() {
+		$client = new Client();
+		$response = ['success' => false, 'linkedContacts' => []]; // Default response structure
+		$clientId = $_SESSION['client_id'];
+	
+		if (isset($clientId)) {
+			$linkedContacts = $client->getClientContacts($clientId);
+	
+			$response['success'] = true; // Indicate the request was successful
+			$response['linkedContacts'] = $linkedContacts ?: []; // Ensure an empty array if no linked contacts
+		}
+	
+		echo json_encode($response);
+	}
+	
+
+	public function getContacts() {
+		$client = new Client;
+		$response['success'] = false;
+
+		$contacts = $client -> getAllContacts();
+
+		if(!empty($contacts)){
+			$response['success'] = true;
+			$response['contacts'] = $contacts;
+		}
+
+		echo json_encode($response);
+	}
+
 	private function validate($data, $client)
 	{
 		$errors = [];
@@ -186,7 +252,7 @@ class AddClient extends Controller {
 			$result = $client->insert($newClient);
 	
 			$_SESSION['client_id'] = $saveClientId;
-			$_SESSION['client'] = $newClient;
+			// $_SESSION['client'] = $newClient;
 	
 			if ($result) {
 				$response['success'] = true;

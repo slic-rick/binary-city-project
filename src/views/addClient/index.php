@@ -54,44 +54,42 @@
             <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
             <div>
             <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Contact Full Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Contact Full Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
             <tbody>
-            <?php if (empty($data['clientContacts'])) { ?>
+<!--            
                 <tr>
                     <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts linked!</td>
-                </tr>
-            <?php } else {
-                $count = 1; // Counter for row numbers
-                foreach ($data['clientContacts'] as $contact) { ?>
-                    <tr id="contact-row-<?php echo $contact['contact_id']; ?>">
-                        <th scope="row"><?php echo $count++; ?></th>
-                        <td><?php echo htmlspecialchars($contact['contact_name'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars($contact['contact_surname'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars($contact['contact_email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr> -->
+            
+                
+                    <tr>
+                        
+                        <td></td>
+                        <td></td>
                         <td>
-                            <form method="POST" action="/add-client?tab=contacts">
-                                <input type="hidden" name="action" value="unlink_contact">
-                                <input type="hidden" name="contact_id" value="<?php echo $contact['contact_id']; ?>">
-                                <input type="hidden" name="client_id" value="<?php echo $contact['client_id']; ?>">
+                            <form method="POST" action="/add-client">
+                                <input type="hidden" name="action" value="">
+                                <input type="hidden" name="contact_id" value="">
+                                <input type="hidden" name="client_id" value="">
                                 <button type="submit" class="btn btn-danger btn-sm unlink-contact-btn">Unlink</button>
                             </form>
                         </td>
                     </tr>
-                <?php } 
-            } ?> 
+                
             </tbody>
         </table>
 
         </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linkContactsModal">Link Contact</button>
+                    <button type="button" class="btn btn-primary" id = "linkContactsButton" data-bs-toggle="modal" data-bs-target="#linkContactsModal">Link Contact</button>
                     <button class="btn btn-primary me-md-2" type="button" onclick="window.location.href='/';">Done</button>
                     <!-- <button class="btn btn-primary" type="button">Button</button> -->
                 </div>
@@ -107,8 +105,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="linkContactsForm" action ="/add-client?tab=contacts" method="POST">
-                        <input type="hidden" name="client_id" value="<?php echo isset($_GET['client']) ? htmlspecialchars($_GET['client']) : (isset($_SESSION['client_id']) ? htmlspecialchars($_SESSION['client_id']) : ''); ?>" />
+                        <form id="linkContactsForm" action ="/add-client" method="POST">
+                        <input type="hidden" name="client_id" value="" />
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -121,24 +119,19 @@
                                 </thead>
                                 <tbody>
 
-                                <?php if(empty($data['contacts'])) { ?>
-                                    <tr>
+                                    <!-- <tr>
                                         <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts found!</td>
-                                    </tr>
+                                    </tr> -->
 
-                               <?php } else { 
+                               
                                         
-                                        // Example data from the database (Replace with actual query results)
-                                        foreach ($data['contacts'] as $contact) { ?>
-                                          <?php  echo "<tr>
-                                                    <td><input type='checkbox' name='contact_ids[]' class='contact-checkbox' value='" . htmlspecialchars($contact['id']) . "' /></td>
-                                                    <td>" . htmlspecialchars($contact['name']) . " " . htmlspecialchars($contact['surname']) . "</td>
-                                                    <td>" . htmlspecialchars($contact['email']) . "</td>
-                                                </tr>";
-                                       }
-                                } ?>
-
-                       
+                                       
+                                   <!-- <tr>
+                                      <td><input type='checkbox' name='contact_ids[]' class='contact-checkbox' /></td>
+                                     <td> </td>
+                                     <td></td>
+                                    </tr> -->
+                                       
                                 </tbody>
                             </table>
                             <div class="modal-footer">
@@ -176,97 +169,209 @@
      </div>
 
     <?php   include "partials/_scripts.php"; ?>
-    
-<script>
-// document.getElementById("nextBtn").addEventListener("click", function () {
-
-//     // Enable the Contacts tab and switch to it
-//     const contactsTab = document.getElementById("contacts-tab");
-//     contactsTab.classList.remove("disabled");
-//     contactsTab.setAttribute("data-bs-toggle", "tab");
-//     contactsTab.setAttribute("data-bs-target", "#contacts");
-//     const tabTrigger = new bootstrap.Tab(contactsTab);
-//     tabTrigger.show();
-
-//     // Allow the form to submit
-//     event.target.form.submit();
-// });
-</script>
 
 <script>
-// document.addEventListener("DOMContentLoaded", function () {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const activeTab = urlParams.get("tab");
 
-//     if (activeTab === "contacts") {
-//         // Activate the Contacts tab
-//         const contactsTab = document.getElementById("contacts-tab");
-//         contactsTab.classList.remove("disabled");
-//         contactsTab.setAttribute("data-bs-toggle", "tab");
-//         contactsTab.setAttribute("data-bs-target", "#contacts");
-//         const tabTrigger = new bootstrap.Tab(contactsTab);
-//         tabTrigger.show();
-//     }
-// });
-document.getElementById("nextBtn").addEventListener("click", async () => {
-    const formData = new FormData(document.getElementById("generalForm"));
+    const linkContactsButton = document.getElementById("linkContactsButton");
+    const saveContactsButton = document.getElementById("saveContactsBtn");
+    const selectAllCheckbox = document.getElementById("selectAll");
 
-    try {
-        console.log('Form data is', formData);
+    document.getElementById("nextBtn").addEventListener("click", async () => {
+        const formData = new FormData(document.getElementById("generalForm"));
 
-        const response = await fetch('/add-client', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json', // Optional: Expecting a JSON response
-            },
-        });
+        try {
+            console.log('Form data is', formData);
 
-        const result = await response.json();
-        console.log('The result is', result);
+            const response = await fetch('/add-client', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json', // Optional: Expecting a JSON response
+                },
+            });
 
-        // Clear previous error states
-        const nameInput = document.getElementById("name");
-        const nameError = document.getElementById("nameError");
-        nameError.textContent = ""; // Clear any previous error message
-        nameInput.classList.remove("is-invalid"); // Remove error styling
+            const result = await response.json();
+            console.log('The result is', result);
 
-        if (result.success) {
-            showToast("Client added successfully!");
+            // Clear previous error states
+            const nameInput = document.getElementById("name");
+            const nameError = document.getElementById("nameError");
+            nameError.textContent = ""; // Clear any previous error message
+            nameInput.classList.remove("is-invalid"); // Remove error styling
 
-            // Enable the contacts tab and trigger the tab switch
-            const contactsTab = document.getElementById("contacts-tab");
+            if (result.success) {
+                showToast("Client added successfully!");
 
-            // Remove the disabled class
-            contactsTab.classList.remove("disabled");
+                // Enable the contacts tab and trigger the tab switch
+                const contactsTab = document.getElementById("contacts-tab");
 
-            // Set the necessary Bootstrap data attributes
-            contactsTab.setAttribute("data-bs-toggle", "tab");
-            contactsTab.setAttribute("data-bs-target", "#contacts");
+                // Remove the disabled class
+                contactsTab.classList.remove("disabled");
 
-            // Create a new Bootstrap Tab instance and show the contacts tab
-            const tabTrigger = new bootstrap.Tab(contactsTab);
-            tabTrigger.show();
+                // Set the necessary Bootstrap data attributes
+                contactsTab.setAttribute("data-bs-toggle", "tab");
+                contactsTab.setAttribute("data-bs-target", "#contacts");
 
-            addClientCodeField(result.client.clientCode);
+                // Create a new Bootstrap Tab instance and show the contacts tab
+                const tabTrigger = new bootstrap.Tab(contactsTab);
+                tabTrigger.show();
 
-            // Change the "Next" button text to "Update"
-            const nextBtn = document.getElementById("nextBtn");
-            nextBtn.textContent = "Update";
-            nextBtn.classList.remove("btn-primary");
-            nextBtn.classList.add("btn-success"); 
+                addClientCodeField(result.client.clientCode);
 
-        } else if (result.errors) {
-            // Set the error message
-            if (result.errors.name) {
-                nameError.textContent = result.errors.name;
-                nameInput.classList.add("is-invalid");
+                // Change the "Next" button text to "Update"
+                const nextBtn = document.getElementById("nextBtn");
+                nextBtn.textContent = "Update";
+                nextBtn.classList.remove("btn-primary");
+                nextBtn.classList.add("btn-success"); 
+
+            } else if (result.errors) {
+                // Set the error message
+                if (result.errors.name) {
+                    nameError.textContent = result.errors.name;
+                    nameInput.classList.add("is-invalid");
+                }
             }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    });
+
+    /**
+     *  LOGIC FOR LINKING AND UNLINKING A CONTACT
+     */
+
+    // Handle the click event for "Link Contact"
+    // document.getElementById('linkContactsButton').addEventListener("click", async () => {
+    //     try {
+    //         const response = await fetch('/get-contacts'); // Fetch contacts
+    //         const data = await response.json();
+
+    //         if (data.success) {
+    //             const tableBody = document.querySelector("#linkContactsModal .table tbody");
+    //             tableBody.innerHTML = ''; // Clear the table
+
+    //             data.contacts.forEach(contact => {
+    //                 const row = document.createElement('tr');
+    //                 row.innerHTML = `
+    //                     <td><input type="checkbox" name="contact_ids[]" class="contact-checkbox" value="${contact.id}" /></td>
+    //                     <td>${contact.name} ${contact.surname}</td>
+    //                     <td>${contact.email}</td>
+    //                 `;
+    //                 tableBody.appendChild(row);
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching contacts:", error);
+    //     }
+    // });
+
+    // Handle the click event for "Link Contact"
+    document.getElementById('linkContactsButton').addEventListener("click", async () => {
+    try {
+        // Fetch all contacts
+        const contactsResponse = await fetch('/get-contacts');
+        const contactsData = await contactsResponse.json();
+
+        // Fetch linked contacts for the current client
+        const linkedResponse = await fetch('/get-linked-contacts');
+        const linkedData = await linkedResponse.json();
+
+        if (contactsData.success && linkedData.success) {
+            const tableBody = document.querySelector("#linkContactsModal .table tbody");
+            tableBody.innerHTML = ''; // Clear the table
+
+            const linkedContacts = linkedData.linkedContacts || []; // Fallback to empty array
+
+            // Populate the modal table with all contacts
+            contactsData.contacts.forEach(contact => {
+                const isChecked = linkedContacts.some(
+                    linkedContact => linkedContact.contact_id === contact.id
+                );
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" name="contact_ids[]" class="contact-checkbox" value="${contact.id}" ${isChecked ? 'checked' : ''} /></td>
+                    <td>${contact.name} ${contact.surname}</td>
+                    <td>${contact.email}</td>
+                `;
+                tableBody.appendChild(row);
+            });
         }
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching contacts:", error);
     }
-});
+    });
+
+
+    // Handle the "Save" button on the modal
+    document.getElementById("saveContactsBtn").addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const form = document.getElementById("linkContactsForm");
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData
+            });
+
+             // Log raw response before parsing
+            //  const rawText = await response.text();
+            // console.log('Raw response text:', rawText);
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                // Close the modal
+                const modalElement = document.getElementById("linkContactsModal");
+                const modalInstance = bootstrap.Modal.getInstance(modalElement); // Get the active instance
+                if (modalInstance) {
+                    modalInstance.hide(); // Hide the modal
+                }
+
+
+                // Show the linked contacts in the table
+                const contactListTable = document.querySelector('#contacts tbody');
+                contactListTable.innerHTML = ''; // Clear existing rows
+
+                result.linkedContacts.forEach(contact => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <th scope="row">${contact.contact_id}</th>
+                        <td>${contact.contact_name}</td>
+                        <td>${contact.contact_email}</td>
+                        <td><button class="btn btn-danger btn-sm unlink-contact-btn" data-contact-id="${contact.contact_id}">Unlink</button></td>
+                    `;
+                    contactListTable.appendChild(row);
+                });
+
+                showToast("Contacts linked successfully!");
+
+                // Automatically tick selected contacts on re-open
+                result.linkedContacts.forEach(contact => {
+                    const checkbox = document.querySelector(`input[value="${contact.contact_id}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            } else {
+                console.error("Error linking contacts:", result.message);
+            }
+        } catch (error) {
+            console.error("Error saving contacts:", error);
+        }
+    });
+
+    // Handle select all functionality
+    selectAllCheckbox.addEventListener("change", () => {
+        const checkboxes = document.querySelectorAll(".contact-checkbox");
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
+
 
 
 function showToast(message) {

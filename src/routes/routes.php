@@ -18,6 +18,8 @@ $router->addRoute('/contactsearch', ContactsController::class, 'search');
 $router->addRoute('/editclient', AddClient::class, 'index');
 $router->addRoute('/editcontact', EditContact::class, 'index');
 $router->addRoute('/updateContact',EditContact::class,'updateContact');
+$router->addRoute('/get-contacts', AddClient::class, 'getContacts');
+$router-> addRoute('/get-linked-contacts,',AddClient::class,'getLinkedContacts');
 
 // $router->get('/', HomeController::class, 'index');
 // $router->get('/contacts', ContactsController::class, 'index');
