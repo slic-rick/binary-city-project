@@ -16,6 +16,8 @@ const showSidebar = (toggleId, sidebarId, headerId, mainId) =>{
        })
    }
 }
+
+
 showSidebar('header-toggle','sidebar', 'header', 'main')
 
 /*=============== LINK ACTIVE ===============*/

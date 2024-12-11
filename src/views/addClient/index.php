@@ -163,6 +163,23 @@
             </div>
         </div>
 
+        <!-- TOAST -->
+         <?php if(isset($data['notification'])) {?>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <img src="..." class="rounded me-2" alt="...">
+                        <strong class="me-auto">Bootstrap</strong>
+                        <small>Notification</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                            <div class="toast-body">
+                                <?php echo htmlspecialchars($data['notification']) ?>
+                    </div>
+            </div>
+        </div>
+        <?php } ?>
+
     </main>
 </div>
 
@@ -179,13 +196,6 @@
     
 <script>
 document.getElementById("nextBtn").addEventListener("click", function () {
-    // const clientName = document.getElementById("name").value.trim();
-    // const clientEmail = document.getElementById("email").value.trim();
-
-    // if (clientName === "" || clientEmail === "") {
-    //     alert("Please fill in all required fields.");
-    //     return;
-    // }
 
     // Enable the Contacts tab and switch to it
     const contactsTab = document.getElementById("contacts-tab");

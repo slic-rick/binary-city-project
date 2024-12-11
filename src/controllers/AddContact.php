@@ -21,11 +21,6 @@ class AddContact extends Controller {
 				$clientId = $_POST['client_id'];
                 $contact_id = $_SESSION['contact_id'];
 
-                // echo "<pre>";
-                // echo print_r($contact_id);
-                // echo print_r($clientId);
-                // echo "</pre>";
-		
 				if ($clientId && $contact_id) {
 					// Unlink the contact from the client
 					$contact->unlinkContact($clientId,$contact_id);

@@ -11,6 +11,21 @@ class Contact{
         $this -> database = new Database();
     }
 
+    public function getcontact($id){
+       $query = "SELECT * FROM contact WHERE id = :id LIMIT 1";
+       $data = ["id" => $id];
+       $result = $this -> database -> query($query, $data); 
+
+       return $result;
+    }
+
+    public function updateContact($contact) {
+        $stmt = "UPDATE contact SET name=:name, surname=:surname,email=:email WHERE id =:id ";
+        $result = $this -> database -> query($stmt,$contact);
+
+        return $result;
+    }
+
 
     public function getContacts() {
         /**

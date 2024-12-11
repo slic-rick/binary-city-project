@@ -29,6 +29,8 @@
   --z-fixed: 100;
 }
 
+
+
 /*========== Responsive typography ==========*/
 @media screen and (min-width: 1150px) {
   :root {

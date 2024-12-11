@@ -90,6 +90,10 @@ class AddClient extends Controller {
 					if ($result) {
 						$clientContacts = $client->getClientContacts($saveClientId);
 						$data['clientContacts'] = $clientContacts;
+						$data['notification'] = "Successfully Added the client";
+					}else{
+						$data['error'] = "An error occurred while adding the client";
+
 					}
 			
 					$data['client_id'] = $saveClientId;
@@ -117,10 +121,6 @@ class AddClient extends Controller {
 	private function validate($data, $client)
 	{
 		$errors = [];
-	
-		// Debugging validation process
-		// echo "Validating the form...";
-	
 		// Check if name is empty
 		if (empty($data['name'])) {
 			$errors[] = "Name is required.";
@@ -151,31 +151,62 @@ class AddClient extends Controller {
 	}
 	
 	
+	private function insertClient(){
 
-    // private function generateClientCode($clientName)
-	// {
-	// 	$clientName = strtoupper($clientName);
-	// 	$prefix = substr($clientName, 0, 3);
+		$response = ['success' => false];
 
-	// 	// If the client name is shorter than 3 characters, pad with additional characters
-	// 	if (strlen($prefix) < 3) {
-	// 		$prefix = str_pad($prefix, 3, 'A');
-	// 	}
+		// Sanitize inputs
+		$name = $this->sanitizeInput($_POST['name']);
 
-	// 	// Ensure the prefix is exactly 3 characters long
-	// 	$prefix = substr($prefix, 0, 3);
+		// Validate form input
+		$errors = $this->validate(['name' => $name], $client);
+	
+		if (empty($errors)) {
+			$contact = new Contact();
+			// Generate client code
+			$clientCode = $this->generateClientCode($name);
+	
+			// Generate a random 8-digit number (you can adjust this as needed)
+			$saveClientId = rand(10000000, 99999999);
+	
+			$newClient = array(
+				'name' => $name,
+				'clientCode' => $clientCode,
+				'id' => $saveClientId
+			);
+	
+			// Insert client data
+			$result = $client->insert($newClient);
+	
+			$_SESSION['client_id'] = $saveClientId;
+			$_SESSION['client'] = $newClient;
+	
+			// If the client got inserted, then get all the clients
+			if ($result) {
+				$response['success'] = true;
+				// $clientContacts = $client->getClientContacts($saveClientId);
+				// $data['clientContacts'] = $clientContacts;
+				// $data['notification'] = "Successfully Added the client";
+			}else{
+				$response['message'] = 'Failed to save client.';
+				// $data['error'] = "An error occurred while adding the client";
 
-	// 	$client = new Client;
-	// 	$counter = 1;
-	// 	do {
-	// 		$numericPart = str_pad($counter, 3, '0', STR_PAD_LEFT);
-	// 		$clientCode = $prefix . $numericPart;
-	// 		$counter++;
-	// 	} while ($client->clientCodeExists($clientCode));
+			}
 
-	// 	return $clientCode;
-	// }
 
+	
+			// $data['client_id'] = $saveClientId;
+	
+			// header("Location: /add-client?tab=contacts&client=$saveClientId");
+			
+		} else {
+			$response['errors'] = $errors;
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($response);
+
+	}
 
 	private function generateClientCode($clientName) {
 		$clientName = strtoupper($clientName);
