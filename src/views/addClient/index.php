@@ -53,39 +53,25 @@
             <!-- Contacts Tab -->
             <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
             <div>
-            <table class="table">
+            <table class="table" id="contactsTable">
                 <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Contact Full Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Action</th>
-                    </tr>
+                  
+                 <tr>
+                    <th scope="col" style="display:none;"></th>
+                    <th scope="col">Contact Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col"> </th>
+                </tr>
+
+                   
                 </thead>
             <tbody>
-<!--            
-                <tr>
+           
+                <tr id="no_contacts">
                     <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts linked!</td>
-                </tr> -->
-            
-                
-                    <tr>
-                        
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <form method="POST" action="/add-client">
-                                <input type="hidden" name="action" value="">
-                                <input type="hidden" name="contact_id" value="">
-                                <input type="hidden" name="client_id" value="">
-                                <button type="submit" class="btn btn-danger btn-sm unlink-contact-btn">Unlink</button>
-                            </form>
-                        </td>
-                    </tr>
-                
+                </tr>   
             </tbody>
         </table>
-
         </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -119,9 +105,7 @@
                                 </thead>
                                 <tbody>
 
-                                    <!-- <tr>
-                                        <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts found!</td>
-                                    </tr> -->
+                                  
 
                                
                                         
@@ -172,6 +156,8 @@
 
 <script>
 
+document.addEventListener("DOMContentLoaded", () => {
+    // Your JavaScript code
     const linkContactsButton = document.getElementById("linkContactsButton");
     const saveContactsButton = document.getElementById("saveContactsBtn");
     const selectAllCheckbox = document.getElementById("selectAll");
@@ -270,10 +256,18 @@
     try {
         // Fetch all contacts
         const contactsResponse = await fetch('/get-contacts');
+        // const raw = await  contactsResponse.text();
+        // console.log('raw contacts response',raw);
+        
         const contactsData = await contactsResponse.json();
 
         // Fetch linked contacts for the current client
         const linkedResponse = await fetch('/get-linked-contacts');
+        // const rawLinked = await  linkedResponse.text();
+
+        // console.log('raw Linked response',rawLinked);
+
+
         const linkedData = await linkedResponse.json();
 
         if (contactsData.success && linkedData.success) {
@@ -311,6 +305,7 @@
         const formData = new FormData(form);
 
         try {
+
             const response = await fetch(form.action, {
                 method: form.method,
                 body: formData
@@ -322,7 +317,7 @@
 
             const result = await response.json();
 
-            if (result.success) {
+            if (result.success) {   
 
                 // Close the modal
                 const modalElement = document.getElementById("linkContactsModal");
@@ -333,18 +328,38 @@
 
 
                 // Show the linked contacts in the table
-                const contactListTable = document.querySelector('#contacts tbody');
+                const contactListTable = document.querySelector('#contactsTable tbody');
                 contactListTable.innerHTML = ''; // Clear existing rows
+
+                // hide the no contacts tr if we linked contacts.
+                if(result.linkedContacts.length > 0){
+                    const noContact = document.getElementById("no_contacts");
+                    // add the style display:none to the tr
+                    if (noContact) {
+                        noContact.style.display = "none"; // Hide the "no contacts" row
+                    }
+                }
 
                 result.linkedContacts.forEach(contact => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <th scope="row">${contact.contact_id}</th>
-                        <td>${contact.contact_name}</td>
-                        <td>${contact.contact_email}</td>
-                        <td><button class="btn btn-danger btn-sm unlink-contact-btn" data-contact-id="${contact.contact_id}">Unlink</button></td>
-                    `;
+
+                    /**
+                     *  <th scope="col"></th>
+                        <th scope="col">Contact Full Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col"></th>
+                     */
+
+                     row.innerHTML = `
+                    <td style="display:none">${contact.contact_id}</td> 
+                    <td>${contact.contact_name} ${contact.contact_surname}</td>
+                    <td>${contact.contact_email}</td>
+                    <td><button class="btn btn-danger btn-sm unlink-contact-btn" data-contact-id="${contact.contact_id}">Unlink</button></td> `;
+
+
                     contactListTable.appendChild(row);
+
+                    
                 });
 
                 showToast("Contacts linked successfully!");
@@ -364,6 +379,77 @@
         }
     });
 
+    // unlink the selectedContact
+
+    // Function to handle unlinking a contact
+    async function unlinkContact(contactId, rowElement) {
+        try {
+            const response = await fetch('unlink-contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ contact_id: contactId }).toString(),});
+
+            // const rawres = await response.text();
+            // console.log("The response is",rawres);
+            
+
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Remove the row from the table
+                rowElement.remove();
+
+                // Check if there are no more rows left in the table
+                const contactListTable = document.querySelector('#contacts tbody');
+
+                if (contactListTable && contactListTable.children.length === 0) {
+                    console.log('contactListTable is empty:', contactListTable);
+
+                    // Create a new row for "No contacts"
+                    const noContactsRow = document.createElement('tr');
+                    noContactsRow.id = "no_contacts"; // Assign the ID for potential future reference
+                    noContactsRow.innerHTML = `
+                        <td colspan="4" class="p-4 text-sm text-gray-600 text-center">No contacts linked!</td>
+                    `;
+
+                    // Append the new row to the table body
+                    contactListTable.appendChild(noContactsRow);
+
+                    console.log("Added new 'No contacts' row.");
+                }else{
+                showToast("We did not get the contactListTable ");
+
+            }
+
+                showToast("Contact unlinked successfully!");
+            } else {
+                console.error("Error unlinking contact:", result.message);
+                showToast("Failed to unlink contact.");
+            }
+        } catch (error) {
+            console.error("Error during unlink operation:", error);
+            showToast("An error occurred while unlinking the contact.");
+        }
+    }
+
+    // Attach the click event listener to "Unlink" buttons
+    document.querySelector('#contacts tbody').addEventListener('click', (event) => {
+        if (event.target.classList.contains('unlink-contact-btn')) {
+            const button = event.target;
+            const contactId = button.getAttribute('data-contact-id');
+            const rowElement = button.closest('tr');
+
+            if (contactId && rowElement) {
+                unlinkContact(contactId, rowElement);
+            }
+        }
+    });
+
+
+
     // Handle select all functionality
     selectAllCheckbox.addEventListener("change", () => {
         const checkboxes = document.querySelectorAll(".contact-checkbox");
@@ -372,16 +458,18 @@
         });
     });
 
+    //
 
 
-function showToast(message) {
-    const toastMessage = document.getElementById('toastMessage');
-    const toastEl = document.getElementById('successToast');
-    toastMessage.textContent = message;
 
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
-}
+    function showToast(message) {
+        const toastMessage = document.getElementById('toastMessage');
+        const toastEl = document.getElementById('successToast');
+        toastMessage.textContent = message;
+
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
 
 // Function to add the readonly clientCode field to the form
 // Function to add the readonly clientCode field to the form
@@ -395,6 +483,10 @@ function addClientCodeField(clientCode) {
     clientCodeInput.value = clientCode;  // Set the clientCode value dynamically
 }
 
+
+});
+
+ 
 
 </script>
 

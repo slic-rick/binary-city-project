@@ -14,6 +14,16 @@ class Client{
         $this -> database = new Database();
     }
 
+    public function deleteAllLinkedContacts($clientId) {
+        $stmt = ' DELETE FROM clientlinkcontact 
+                  WHERE clientId = :clientId';
+
+        $data = ['clientId' => $clientId];
+        $result = $this -> database -> query($stmt,$data);
+
+        return $result;
+    }
+
     public function getClients() {
         // SQL to fetch clients and the count of linked contacts
         $stmt = '

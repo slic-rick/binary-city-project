@@ -131,6 +131,33 @@ class AddClient extends Controller {
         $this->renderView('addClient/index', ['data' => $data]);
     }
 
+	public function unlinkContact() {
+
+		$response['success'] = false;
+
+		$clientId = $_SESSION['client_id'];
+		$contactId = $_POST['contact_id'];
+
+		if (isset($contactId) && isset($clientId)) {
+
+			$client = new Client;
+			$unlinkSuccess = $client->unlinkContact($contactId,$clientId);
+	
+			// if ($unlinkSuccess) {
+			$response['success'] = true;
+			// } else {
+			// 	$response['message'] = "Failed to unlink contact.";
+			// }
+
+
+		} else {
+			$response['message'] = "Invalid contact ID.";
+		}
+	
+		echo json_encode($response);
+	}
+	
+
 	private function saveLinkedContacts(){
 			 // Check if form data exists
 			// if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
@@ -146,6 +173,17 @@ class AddClient extends Controller {
 				// echo "The client ID is: " . $clientId;
 
 				if(isset($clientId)){
+
+					// Check if the user has any linked contacts
+
+					$linkedContacts = $client -> getClientContacts($clientId);
+
+					if(!empty($linkedContacts)){
+
+						// delete all linked contacts
+						$deleteLinkedContacts = $client -> deleteAllLinkedContacts($clientId);
+
+					}
 
 					$client -> saveLinkedContact($_POST['contact_ids'],$clientId);
 					$clientContacts = $client -> getClientContacts($clientId);
@@ -164,7 +202,7 @@ class AddClient extends Controller {
 	}
 
 	public function getLinkedContacts() {
-		$client = new Client();
+		$client = new Client;
 		$response = ['success' => false, 'linkedContacts' => []]; // Default response structure
 		$clientId = $_SESSION['client_id'];
 	
@@ -176,6 +214,7 @@ class AddClient extends Controller {
 		}
 	
 		echo json_encode($response);
+		exit();
 	}
 	
 
