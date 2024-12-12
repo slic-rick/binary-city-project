@@ -375,7 +375,7 @@ body.dark-theme {
   }
 
   .main {
-    padding-left: 340px;
+    /* padding-left: 340px; */
     padding-top: 8rem;
     transition: padding .4s;
   }

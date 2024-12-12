@@ -37,7 +37,7 @@
       <div class="container">
 
         <div class = "row">
-            <div class="col-4">
+            <div class="col-3">
                  <!--=============== SIDEBAR ===============-->
                 <nav class="sidebar" id="sidebar">
                     <div class="sidebar__container">

@@ -11,6 +11,7 @@ class Router {
     }
 
     public function dispatch($uri) {
+        
           // Remove query parameters
             $uri = strtok($uri, '?');
             
