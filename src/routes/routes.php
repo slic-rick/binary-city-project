@@ -20,6 +20,11 @@ $router->addRoute('/editcontact', EditContact::class, 'index');
 $router->addRoute('/updateContact',EditContact::class,'updateContact');
 $router->addRoute('/get-contacts', AddClient::class, 'getContacts');
 $router-> addRoute('/get-linked-contacts',AddClient::class,'getLinkedContacts');
+$router-> addRoute('/get-clients',AddContact::class,'getClients');
+
+$router-> addRoute('/get-linked-clients',AddContact::class,'getLinkedClients');
+$router-> addRoute('/unlink-client',AddContact::class,'unlinkClient');
+// unlink-client
 
 // unlinkContact
 $router-> addRoute('/unlink-contact',AddClient::class,'unlinkContact');
