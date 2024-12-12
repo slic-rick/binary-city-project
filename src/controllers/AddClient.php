@@ -14,115 +14,18 @@ class AddClient extends Controller {
        	  $data = [];
 		  $client = new Client;
 
-		//   echo "<pre>Raw Input: " . file_get_contents('php://input') . "</pre>";
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
+			$this -> saveLinkedContacts();
+		}else if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-
-		//   echo "<pre>";
-		//   print_r($_POST);
-		//   echo "</pre>";
-
-			// Handle unlink contact request
-			// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'unlink_contact') {
-
-			// 	// Validate input
-			// 	$contactId = $_POST['contact_id'] ?? null;
-			// 	$clientId = $_POST['client_id'] ?? $_SESSION['client_id'];
-
-			// 	if ($contactId && $clientId) {
-
-
-			// 		// Unlink the contact from the client
-			// 		$client->unlinkContact($contactId, $clientId);
-
-			// 		$clientContacts = $client -> getClientContacts($clientId);
-
-			// 		$data['clientContacts'] = $clientContacts;
-			// 	}
-
-			// 	// Redirect back to the contacts tab to avoid duplicate form submissions
-			// 	// header("Location: /add-client?tab=contacts");
-			// 	// exit;
-			// }
-
-		 // Check if form data exists
-			// if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
-
-			// 			$contactIds = $_POST['contact_ids']; // Array of selected contact IDs
-
-			// 			// // Get the last insertedId
-			// 			// $clientId = $client->getlastInsertedId();
-			// 			$clientId = $_POST['client_id'] ?? $_SESSION['client_id'] ?? null;// Retrieve the 'client' parameter from the URL	
-					
-			// 			// echo "The client ID is: " . $clientId;
-
-			// 			if(isset($clientId)){
-
-			// 				$client -> saveLinkedContact($_POST['contact_ids'],$clientId);
-			// 				$clientContacts = $client -> getClientContacts($clientId);
-	
-			// 				$data['clientContacts'] = $clientContacts;
-
-			// 			}else{
-			// 				echo "client id Not set";
-			// 			}
-			// }
-			if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
-				$this -> saveLinkedContacts();
-			}
-
-			if ($_SERVER['REQUEST_METHOD'] == "POST") {
-
-				$this -> insertClient();
-
-				// // Sanitize inputs
-				// $name = $this->sanitizeInput($_POST['name']);
-			
-				// // Validate form input
-				// $errors = $this->validate(['name' => $name], $client);
-			
-				// if (empty($errors)) {
-				// 	// Generate client code
-				// 	$clientCode = $this->generateClientCode($name);
-			
-				// 	// Generate a random 8-digit number (you can adjust this as needed)
-				// 	$saveClientId = rand(10000000, 99999999);
-			
-				// 	$newClient = array(
-				// 		'name' => $name,
-				// 		'clientCode' => $clientCode,
-				// 		'id' => $saveClientId
-				// 	);
-			
-				// 	// Insert client data
-				// 	$result = $client->insert($newClient);
-			
-				// 	$_SESSION['client_id'] = $saveClientId;
-				// 	$_SESSION['client'] = $newClient;
-			
-				// 	// If the client got inserted, then get all the clients
-				// 	if ($result) {
-				// 		$clientContacts = $client->getClientContacts($saveClientId);
-				// 		$data['clientContacts'] = $clientContacts;
-				// 		$data['notification'] = "Successfully Added the client";
-				// 	}else{
-				// 		$data['error'] = "An error occurred while adding the client";
-
-				// 	}
-			
-				// 	$data['client_id'] = $saveClientId;
-			
-				// 	header("Location: /add-client?tab=contacts&client=$saveClientId");
-				// 	exit;
-				// } else {
-				// 	$data['errors'] = $errors;
-				// }
-			}
+			$this -> insertClient();
+		}
 			
 
 		
-			$contacts = $client -> getAllContacts();
+		$contacts = $client -> getAllContacts();
 
-			$data['contacts'] = $contacts;
+		$data['contacts'] = $contacts;
 
 
 
@@ -142,12 +45,8 @@ class AddClient extends Controller {
 
 			$client = new Client;
 			$unlinkSuccess = $client->unlinkContact($contactId,$clientId);
-	
-			// if ($unlinkSuccess) {
 			$response['success'] = true;
-			// } else {
-			// 	$response['message'] = "Failed to unlink contact.";
-			// }
+			
 
 
 		} else {
@@ -160,17 +59,15 @@ class AddClient extends Controller {
 
 	private function saveLinkedContacts(){
 			 // Check if form data exists
-			// if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['contact_ids'])) {
 				$client = new Client;
 
 				$response['success'] = false;
 				$contactIds = $_POST['contact_ids']; // Array of selected contact IDs
 
-				// // Get the last insertedId
-				// $clientId = $client->getlastInsertedId();
+				//save
+
 				$clientId =  $_SESSION['client_id'] ?? $_POST['client_id'] ?? null; // Retrieve the 'client' parameter from the URL	
 			
-				// echo "The client ID is: " . $clientId;
 
 				if(isset($clientId)){
 

@@ -137,6 +137,19 @@ class AddContact extends Controller {
 
 
         if(isset($contactId)){
+
+            // check if the user has linked clints and delete them
+
+            
+            $contactClients = $contact -> getContactClients($contactId);
+
+					if(!empty($contactClients)){
+
+						// delete all linked contacts
+						$deleteLinkedContacts = $contact -> deleteAllLinkedClients($contactId);
+
+					}
+
             $contact -> saveLinkedContact($_POST['client_ids'],$contactId);
             $contactClients = $contact -> getContactClients($contactId);
 

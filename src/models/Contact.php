@@ -159,5 +159,16 @@ class Contact{
         // Return false if no match was found
         return false;
     }
+
+    public function deleteAllLinkedClients($contactId)  {
+
+        $stmt = ' DELETE FROM clientlinkcontact 
+        WHERE contactId = :contactId';
+
+        $data = ['contactId' => $contactId];
+        $result = $this -> database -> query($stmt,$data);
+
+        return $result;
+    }
     
 }

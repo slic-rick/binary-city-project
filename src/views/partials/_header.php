@@ -73,19 +73,6 @@
                         </div>
 
 
-                        <div class="sidebar__actions">
-                        <button>
-                            <i class="ri-moon-clear-fill sidebar__link sidebar__theme" id="theme">
-                                <span>Theme</span>
-                            </i>
-                        </button>
-
-                        <button class="sidebar__link">
-                            <!-- <i class="ri-logout-box-r-fill"></i> -->
-                            <i class="ri-file-pdf-fill"></i>
-                            <span>Documentation</span>
-                        </button>
-                        </div>
                     </div>
                 </nav>
             </div>
